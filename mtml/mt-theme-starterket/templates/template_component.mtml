@@ -1,0 +1,26 @@
+<mt:Ignore>
+========================================
+Template Name : component
+Template Type : Module / WebSite
+Template Note : Component Template
+========================================
+</mt:Ignore>
+
+<mt:Ignore>
+************************
+フォーマット
+************************
+## 定義（Set）
+<mt:SetVarTemplate name="_base_button" key="button" note="ボタン">
+<div class="button">
+  <a class="button__link" href="<mt:Var name="_button_link" />">
+    <mt:Var name="_button_name" />
+  </a>
+</div>
+</mt:SetVarTemplate>
+## 実行（Build）※出力するテンプレートで実行する
+<mt:Var name="_base_button" key="button" _button_link="/path/" _button_name="ボタンの名前" note="_base_buttonを実行" />
+
+※SetVarTemplate内のVarの名前にハイフンを入れると処理が抜ける
+</mt:Ignore>
+

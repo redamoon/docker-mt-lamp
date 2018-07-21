@@ -1,0 +1,54 @@
+/www/logs/*
+!/www/logs/.keep
+/www/html/*
+!/www/html/.keep
+!/www/html/.htaccess
+/db-data/
+
+# gitignore
+
+# ------------------------------
+# Numerous always-ignore extensions
+# ------------------------------
+
+*~
+*.diff
+*.log
+*.swp
+*.zip
+*.sass-cache
+*.tmphtml
+*.map
+*.dat
+*.pid
+
+# ------------------------------
+# OS or Editor filders
+# ------------------------------
+
+.DS_Store
+._*
+Thumbs.db
+.cache
+.project
+.settings
+.sublime-project
+.sublime-workspace
+
+# ------------------------------
+# Folders to ignore
+# ------------------------------
+
+.svn
+.ssh
+.grunt
+.vagrant
+.vagrant.d
+.idea
+node_modules
+components
+bower
+bower_components
+_bower
+pids
+

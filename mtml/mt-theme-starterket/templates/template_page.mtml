@@ -1,0 +1,23 @@
+<mt:Ignore>
+========================================
+Template Name : page
+Template Type : Web Page Template
+Template Note : ウェブページ出力用
+========================================
+</mt:Ignore>
+<mt:Include module="config" parent="1" />
+<mt:Include module="function" parent="1" />
+<mt:Ignore>** ローカル変数 **</mt:Ignore>
+<mt:SetVars>
+
+</mt:SetVars>
+
+<mt:Ignore>** 表示部分 **</mt:Ignore>
+<mt:Unless name="compress" regex_replace="/^\s*\n/gm","">
+<mt:Include module="html_head" parent="1" />
+<mt:Include module="header" parent="1" />
+<mt:Include module="navigation" parent="1" />
+<mt:PageBody mteval="1" />
+<mt:Include module="footer" parent="1" />
+<mt:Include module="html_foot" parent="1" />
+</mt:Unless>
