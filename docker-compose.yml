@@ -22,9 +22,8 @@ services:
     ports:
       - "10080:80"
     volumes:
-      - ./mt-setting.sh:/var/www/mt-setting.sh
-      - ./www/html:/var/www/html
-      - ./www/logs:/var/www/log
+      - ./www/html:/var/www/local/html
+      - ./www/logs:/var/www/local/logs
       - ./mtml:/var/www/local/cgi-bin/mt/themes
       - ./mt-static/mtml:/var/www/local/cgi-bin/mt/mt-static/themes
       - ./docker/httpd/conf/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
@@ -34,7 +33,6 @@ services:
     #   MT_DATABASE_USERNAME: ${MYSQL_USER}
     #   MT_DATABASE_PASSWORD: ${MYSQL_PASSWORD}
     #   MT_DBHost: mysql
-    env_file: .env
     depends_on:
       - mysql
 volumes:

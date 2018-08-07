@@ -91,6 +91,8 @@ RUN mv /var/www/local/cgi-bin/MT-7.0 /var/www/local/cgi-bin/mt
 ADD mt-settings/plugins /var/www/local/cgi-bin/mt/plugins/
 ADD mt-settings/mt-static/plugins /var/www/local/cgi-bin/mt/mt-static/plugins/
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
+RUN chmod 777 /var/www/
+RUN chmod 777 /var/www/local
 RUN chmod 755 /var/www/local/cgi-bin/mt/*.cgi
 
 EXPOSE 80
