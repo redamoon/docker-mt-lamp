@@ -4,6 +4,7 @@ version: "3"
 # サービス定義
 services:
   mysql:
+    container_name: ${CONTAINER_BASE_NAME}-db
     image: mysql:5.7
     restart: always
     environment:
@@ -18,6 +19,7 @@ services:
       - ./db-data:/var/lib/mysql
       - ./sql/test_data_mysql.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
   web:
+    container_name: ${CONTAINER_BASE_NAME}-apache
     build: ./docker/httpd
     ports:
       - "10080:80"
@@ -28,6 +30,7 @@ services:
       - ./mt-static/mtml:/var/www/local/cgi-bin/mt/mt-static/themes
       - ./docker/httpd/conf/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
       - ./docker/httpd/mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
+      - ./setup-mt7.sh:/var/www/setup-mt7.sh
     # environment:
     #   MT_DATABASE_NAME: ${MYSQL_DATABASE}
     #   MT_DATABASE_USERNAME: ${MYSQL_USER}
