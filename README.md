@@ -5,13 +5,10 @@
 - Apache
 - MySQL 5.7
 - Perl
+- PHP 7.2.9
 - Movable Type
 
 ## Directory structure
-
-```
-
-```
 
 ## docker-compose command
 
@@ -42,11 +39,11 @@ docker-compose up -d --build
 ### Login SSH Web
 
 ```
-docker exec -it コンテナ名 /bin/bash
+docker exec -it web-apache /bin/bash
 ```
 
 ### Login MySQL
 
 ```
-docker exec -it コンテナ名 /bin/bash
+docker exec -it web-db /bin/bash
 ```
