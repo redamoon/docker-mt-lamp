@@ -31,11 +31,6 @@ services:
       - ./docker/httpd/conf/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
       - ./docker/httpd/mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
       - ./setup-mt7.sh:/var/www/setup-mt7.sh
-    # environment:
-    #   MT_DATABASE_NAME: ${MYSQL_DATABASE}
-    #   MT_DATABASE_USERNAME: ${MYSQL_USER}
-    #   MT_DATABASE_PASSWORD: ${MYSQL_PASSWORD}
-    #   MT_DBHost: mysql
     depends_on:
       - mysql
 volumes:

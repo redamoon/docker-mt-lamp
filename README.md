@@ -10,7 +10,12 @@
 ## Directory structure
 
 ```
-
+- ./
+  - .env 環境変数
+  - .gitignore 除外ファイルの設定
+  - README.md ドキュメント
+  - docker-compose.yml
+  - setup-mt7.sh
 ```
 
 ## docker-compose command
