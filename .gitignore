@@ -2,7 +2,7 @@
 !/www/logs/.keep
 /www/html/*
 !/www/html/.keep
-!/www/html/.htaccess
+# !/www/html/.htaccess
 /db-data/
 
 # gitignore

@@ -29,6 +29,12 @@ RUN ln -s /usr/share/zoneinfo/Japan /etc/localtime
 RUN yum -y install git unzip glibc httpd httpd-devel
 
 # ===========================
+# Remi リポジトリの追加
+# ===========================
+RUN yum -y install epel-release
+RUN yum -y install http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+
+# ===========================
 # Perl・DB・Yumリポジトリ・CAPN
 # ===========================
 RUN yum -y install perl perl-CGI perl-CPAN "perl(Module::Build)" "perl(DBD::mysql)"
@@ -41,7 +47,6 @@ RUN yum -y install "perl(Image::Magick)" "perl(Digest::MD5)" "perl(Mozilla::CA)"
 # ===========================
 # Memcached
 # ===========================
-RUN yum -y install epel-release
 RUN yum -y install memcached "perl(Cache::Memcached)"
 
 # ===========================
@@ -67,7 +72,21 @@ RUN yum -y  install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)
 # Other：ライブラリ
 # ===========================
 RUN yum -y install "perl(Authen::SASL)" "perl(Crypt::SSLeay)" "perl(Crypt::DSA)" "perl(Digest::SHA)" "perl(Digest::SHA1)" "perl(HTML::Parser)" "perl(XML::Parser)" "perl(YAML::Syck)"
-RUN yum -y install "perl(Heap::Fibonacci)" "perl(File::NFSLock)" "perl(IO::String)" "perl(DB_File)"
+RUN yum -y install "perl(Heap::Fibonacci)" "perl(File::NFSLock)" "perl(IO::String)" "perl(DB_File)" "perl(HTTP::Date)" "perl(Text::CSV_XS)" "perl(MIME::Parser)" "perl(LWP::UserAgent)" "perl(Scalar::Util)" "perl(CGI::Cookie)" "perl(File::Spec)" "perl(parent)"
+
+# ===========================
+# php
+# ===========================
+RUN yum -y install --enablerepo=remi,remi-php72 php php-devel php-mbstring php-pdo php-gd php-xml php-mcrypt php-mysqlnd && \
+    yum clean all && \
+    sed -i -e "s/;date.timezone *=.*$/date.timezone = Asia\/Tokyo/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.language *=.*$/mbstring.language = Japanese/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.internal_encoding *=.*$/mbstring.internal_encoding = UTF-8/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.http_input *=.*$/mbstring.http_input = UTF-8/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.http_output *=.*$/mbstring.http_output = pass/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.encoding_translation *=.*$/mbstring.encoding_translation = On/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.detect_order *=.*$/mbstring.detect_order = pass/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.substitute_charset *=.*$/mbstring.substitute_charset = none/" /etc/php.ini
 
 # ===========================
 # Httpd Setting
@@ -79,17 +98,20 @@ RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.c
 RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
-RUN touch /var/www/setup-mt7.sh
-RUN chmod a+x /var/www/setup-mt7.sh
+RUN sed -i '/LoadModule rewrite_module/s/^#//g' /etc/httpd/conf/httpd.conf
+#RUN touch /var/www/setup-mt7.sh
+#RUN chmod a+x /var/www/setup-mt7.sh
 RUN mkdir -p /var/www/local/cgi-bin
 
 # ===========================
 # Movable Type Setting
 # ===========================
+#ADD mt-settings/mt-data/mt_powercms.zip /var/www/local/cgi-bin/
+#RUN unzip '/var/www/local/cgi-bin/mt_powercms.zip' -d '/var/www/local/cgi-bin/'
+#RUN mv /var/www/local/cgi-bin/mt_powercms /var/www/local/cgi-bin/mt
 ADD mt-settings/mt-data/MT-7.0.zip /var/www/local/cgi-bin/
 RUN unzip '/var/www/local/cgi-bin/MT-7.0.zip' -d '/var/www/local/cgi-bin/'
 RUN mv /var/www/local/cgi-bin/MT-7.0 /var/www/local/cgi-bin/mt
-#RUN sed -i s/DATABASE_NAME/'"${MT_DATABASE_NAME}"'/ /var/www/local/cgi-bin/mt/mt-config.cgi-original
 ADD mt-settings/plugins /var/www/local/cgi-bin/mt/plugins/
 ADD mt-settings/mt-static/plugins /var/www/local/cgi-bin/mt/mt-static/plugins/
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
