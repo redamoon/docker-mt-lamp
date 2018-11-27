@@ -33,6 +33,3 @@ services:
       - ./setup-mt7.sh:/var/www/setup-mt7.sh
     depends_on:
       - mysql
-#volumes:
-#  db-data:
-#    driver: local

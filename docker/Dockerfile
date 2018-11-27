@@ -87,9 +87,6 @@ RUN mkdir -p /var/www/local/cgi-bin
 ADD mt-data/MT-7.0.zip /var/www/local/cgi-bin/
 RUN unzip '/var/www/local/cgi-bin/MT-7.0.zip' -d '/var/www/local/cgi-bin/'
 RUN mv /var/www/local/cgi-bin/MT-7.0 /var/www/local/cgi-bin/mt
-#RUN sed -i s/DATABASE_NAME/'"${MT_DATABASE_NAME}"'/ /var/www/local/cgi-bin/mt/mt-config.cgi-original
-#ADD mt-settings/plugins /var/www/local/cgi-bin/mt/plugins/
-#ADD mt-settings/mt-static/plugins /var/www/local/cgi-bin/mt/mt-static/plugins/
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
 RUN chmod 777 /var/www/
 RUN chmod 777 /var/www/local
