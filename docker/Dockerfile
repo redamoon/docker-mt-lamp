@@ -79,19 +79,17 @@ RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.c
 RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
-RUN touch /var/www/setup-mt7.sh
-RUN chmod a+x /var/www/setup-mt7.sh
 RUN mkdir -p /var/www/local/cgi-bin
 
 # ===========================
 # Movable Type Setting
 # ===========================
-ADD mt-settings/mt-data/MT-7.0.zip /var/www/local/cgi-bin/
+ADD mt-data/MT-7.0.zip /var/www/local/cgi-bin/
 RUN unzip '/var/www/local/cgi-bin/MT-7.0.zip' -d '/var/www/local/cgi-bin/'
 RUN mv /var/www/local/cgi-bin/MT-7.0 /var/www/local/cgi-bin/mt
 #RUN sed -i s/DATABASE_NAME/'"${MT_DATABASE_NAME}"'/ /var/www/local/cgi-bin/mt/mt-config.cgi-original
-ADD mt-settings/plugins /var/www/local/cgi-bin/mt/plugins/
-ADD mt-settings/mt-static/plugins /var/www/local/cgi-bin/mt/mt-static/plugins/
+#ADD mt-settings/plugins /var/www/local/cgi-bin/mt/plugins/
+#ADD mt-settings/mt-static/plugins /var/www/local/cgi-bin/mt/mt-static/plugins/
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
 RUN chmod 777 /var/www/
 RUN chmod 777 /var/www/local
