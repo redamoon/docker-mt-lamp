@@ -16,7 +16,7 @@
   - .gitignore 除外ファイルの設定
   - README.md ドキュメント
   - docker-compose.yml
-  - setup-mt7.sh
+  - setup-mt7.sh（セットアップ用のコマンド作成予定）
 ```
 
 ## docker-compose command
