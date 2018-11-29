@@ -41,6 +41,7 @@
 3. mt-settings/mt-config.cgiで設定したDB情報を入力
 4. Movable Type本体のディレクトリ名をMT-7.0にしてzipにする
 5. docker/mt-data 配下にMovable Typeをzipで配置
+6. docker-compose.ymlの階層で `docker-compose up -d --build` 起動とビルド
 
 ## docker-compose command
 
@@ -81,4 +82,20 @@ docker exec -it コンテナ名 /bin/bash
 
 ```
 docker exec -it コンテナ名 /bin/bash
+```
+
+## ローカルで構築したCMSのデータを共有する手順
+
+1. 出力された画像などをzipにまとめる
+2. git経由でzipデータを共有する（共有先は任意）
+3. バックアップしたsqlを共有
+4. zipを解凍して該当のドキュメントルートへ入れる
+5. sqlをリストアしてデータベースを上書きする
+
+```bash
+# Backup
+docker exec CONTAINER /usr/bin/mysqldump -u root --password=root DATABASE > backup.sql
+
+# Restore
+cat backup.sql | docker exec -i CONTAINER /usr/bin/mysql -u root --password=root DATABASE
 ```
