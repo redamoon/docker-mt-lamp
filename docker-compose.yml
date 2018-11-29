@@ -22,7 +22,7 @@ services:
     container_name: ${CONTAINER_BASE_NAME}-apache
     build: ./docker
     ports:
-      - "10080:80"
+      - "${PORT}"
     volumes:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
