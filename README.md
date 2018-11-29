@@ -10,7 +10,6 @@
 
 ## Directory structure
 
-<<<<<<< HEAD
 ```
 - ./
   - .env 環境変数
@@ -20,8 +19,6 @@
   - setup-mt7.sh
 ```
 
-=======
->>>>>>> a11bd2a8d411d0a152461975f9a8895aecf3288e
 ## docker-compose command
 
 ### Start
