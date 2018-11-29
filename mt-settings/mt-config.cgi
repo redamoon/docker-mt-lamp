@@ -9,6 +9,7 @@ StaticWebPath    /cgi-bin/mt/mt-static
 #   you will be using.
 
 ##### MYSQL #####
+DBSocket /var/lib/mysql/mysql.sock
 ObjectDriver DBI::mysql
 Database movabletype
 DBUser movabletype
