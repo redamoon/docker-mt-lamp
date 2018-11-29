@@ -1,8 +1,8 @@
 # The CGIPath is the URL to your Movable Type directory
-CGIPath    /cgi-bin/mt/
+CGIPath /cgi-bin/mt/
 
 # simply remove it or comment out the line by prepending a "#".
-StaticWebPath    /cgi-bin/mt/mt-static
+StaticWebPath /cgi-bin/mt/mt-static
 
 #================ DATABASE SETTINGS ==================
 #   CHANGE setting below that refer to databases

@@ -13,7 +13,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-    env_file: .env
+    env_file: .env.sample
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes:
       - ./db-data:/var/lib/mysql
@@ -22,7 +22,7 @@ services:
     container_name: ${CONTAINER_BASE_NAME}-apache
     build: ./docker
     ports:
-      - "10080:80"
+      - "${PORT}"
     volumes:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
