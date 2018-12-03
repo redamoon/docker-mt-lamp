@@ -28,7 +28,6 @@ services:
       - ./www/logs:/var/www/local/logs
       - ./mtml:/var/www/local/cgi-bin/mt/themes
       - ./mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
-      - ./mt-settings/mt-static/mtml:/var/www/local/cgi-bin/mt/mt-static/themes
       - ./docker/httpd/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
     depends_on:
       - mysql
