@@ -1,5 +1,7 @@
 # CentOSの最新を指定
-FROM centos:latest
+# FROM centos:latest
+# CentOS 7 固定指定
+FROM centos:7
 MAINTAINER "redamoon"
 
 RUN yum -y clean all
