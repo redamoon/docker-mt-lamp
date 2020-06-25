@@ -30,6 +30,7 @@ services:
       - ./mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
       - ./mt-settings/mt-static/mtml:/var/www/local/cgi-bin/mt/mt-static/themes
       - ./docker/httpd/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
-      - ./setup-mt7.sh:/var/www/setup-mt7.sh
+    privileged: true
+    command: /sbin/init
     depends_on:
       - mysql
