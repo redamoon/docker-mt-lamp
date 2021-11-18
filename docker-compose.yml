@@ -18,6 +18,8 @@ services:
     volumes:
       - ./db-data:/var/lib/mysql
       - ./sql/test_data_mysql.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
+    ports:
+      - 3306:3306
   web:
     container_name: ${CONTAINER_BASE_NAME}-apache
     build: ./docker
