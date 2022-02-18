@@ -1,0 +1,65 @@
+# CentOSの最新を指定
+# FROM centos:latest
+# CentOS 7 固定指定
+FROM centos:7
+MAINTAINER "redamoon"
+
+RUN yum -y clean all
+
+RUN rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-7
+RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7
+
+RUN yum -y update && yum clean all
+
+# ===========================
+# Locale Setting
+# ===========================
+RUN rm -f /etc/rpm/macros.image-language-conf && \
+    sed -i '/^override_install_langs=/d' /etc/yum.conf && \
+    yum -y reinstall glibc-common && \
+    yum clean all
+
+ENV LANG="ja_JP.UTF-8" \
+    LANGUAGE="ja_JP:ja" \
+    LC_ALL="ja_JP.UTF-8"
+RUN unlink /etc/localtime
+RUN ln -s /usr/share/zoneinfo/Japan /etc/localtime
+
+# ===========================
+# Base Package
+# ===========================
+RUN yum -y install git unzip glibc httpd httpd-devel
+
+# ===========================
+# Remi リポジトリの追加
+# ===========================
+RUN yum -y install epel-release
+RUN yum -y install http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
+
+# ===========================
+# php
+# ===========================
+RUN yum -y install --enablerepo=remi,remi-php72 php php-devel php-mbstring php-pdo php-gd php-xml php-mcrypt php-mysqlnd && \
+    yum clean all && \
+    sed -i -e "s/;date.timezone *=.*$/date.timezone = Asia\/Tokyo/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.language *=.*$/mbstring.language = Japanese/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.internal_encoding *=.*$/mbstring.internal_encoding = UTF-8/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.http_input *=.*$/mbstring.http_input = UTF-8/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.http_output *=.*$/mbstring.http_output = pass/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.encoding_translation *=.*$/mbstring.encoding_translation = On/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.detect_order *=.*$/mbstring.detect_order = pass/" /etc/php.ini && \
+    sed -i -e "s/;mbstring.substitute_charset *=.*$/mbstring.substitute_charset = none/" /etc/php.ini
+
+# ===========================
+# Httpd Setting
+# ===========================
+RUN sed -i.org '/#AddHandler cgi-script/s/#//' /etc/httpd/conf/httpd.conf
+RUN sed -i    "/^#NameVirtualHost \*:80$/ s/#NameVirtualHost \*:80/NameVirtualHost \*:80/" /etc/httpd/conf/httpd.conf
+RUN sed -i -e "s/KeepAlive Off/KeepAlive On/g" /etc/httpd/conf/httpd.conf
+RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.conf
+RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/httpd/conf/httpd.conf
+RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
+RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
+
+EXPOSE 80
+CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]

@@ -19,16 +19,31 @@ services:
       - ./db-data:/var/lib/mysql
       - ./sql/test_data_mysql.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
     ports:
-      - 3306:3306
+      - ${DB_PORT}
+  mt:
+    build:
+      context: .
+      dockerfile: ./docker/DockerfileMovableType
+      args:
+        APP_PORT: ${APP_PORT}
+        WORK_DIR: ${WORK_DIR}
+    volumes:
+      - ./src:/var/www
+      - ./mt-settings/mt-config.cgi:/var/www/html/mt/mt-config.cgi
+    depends_on:
+      - mysql
+    env_file: .env
   web:
     container_name: ${CONTAINER_BASE_NAME}-apache
-    build: ./docker
+    build:
+      context: .
+      dockerfile: ./docker/DockerfileApache
     ports:
-      - "${PORT}"
+      - "${WEB_PORT}"
     volumes:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
-      - ./mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
       - ./docker/httpd/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
     depends_on:
       - mysql
+      - mt

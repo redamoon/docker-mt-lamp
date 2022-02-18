@@ -77,7 +77,7 @@ docker-compose up -d --build
 ```
 docker exec -it コンテナ名 /bin/bash
 ```
-
+starman -l 127.0.0.1:5000 --pid /var/www/local/cgi-bin/mt/pids/mt.pid ./mt.psgi
 ### Login MySQL
 
 ```

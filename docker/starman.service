@@ -1,0 +1,16 @@
+[Unit]
+Description=starman for mt
+After=syslog.target
+After=network.target
+After=mysql.service
+[Service]
+User=apache
+Group=apache
+Restart=always
+SyslogIdentifier=starman
+Environment=MT_HOME=/var/www/local/cgi-bin/mt
+Environment=MT_CONFIG=${MT_HOME}/mt-config.cgi
+ExecStart=/bin/sh -c "/usr/local/perl5/perls/perl-5.30.0/bin/starman ${MT_HOME}/mt.psgi --access-log /var/log/starman/access_log --error-log /var/log/starman/error_log --pid `perl -ne 'next if /^#/; print $1 if /^\s*PIDFilePath\s+(.*)/i' ${MT_CONFIG}`"
+ExecReload=/bin/kill -HUP $MAINPID
+[Install]
+WantedBy=multi-user.target

@@ -1,9 +1,10 @@
 # The CGIPath is the URL to your Movable Type directory
-CGIPath /cgi-bin/mt/
+CGIPath http://localhost:8085/mt/
 
 # simply remove it or comment out the line by prepending a "#".
-StaticWebPath /cgi-bin/mt/mt-static
-
+StaticWebPath /mt-static/
+StaticFilePath /var/www/html/mt-static
+BaseSitePath   /var/www/html
 #================ DATABASE SETTINGS ==================
 #   CHANGE setting below that refer to databases
 #   you will be using.
@@ -21,3 +22,5 @@ DefaultLanguage ja
 
 ## Debug Mode
 DebugMode 1
+
+PIDFilePath /var/run/mt.pid

@@ -1,0 +1,13 @@
+FROM ubuntu:18.04
+RUN sed -i 's/\/archive.ubuntu.com/\/jp.archive.ubuntu.com/g' /etc/apt/sources.list
+RUN apt-get -y update
+RUN apt-get -y dist-upgrade
+RUN apt-get install -y --no-install-recommends build-essential libimager-perl libimage-magick-perl libdbi-perl libdbd-mysql-perl libipc-run-perl libcrypt-dsa-perl libxml-sax-expatxs-perl libxml-sax-perl libarchive-zip-perl libcoro-perl libplack-middleware-debug-perl
+RUN cpanminus starman
+RUN cpanm Mozilla::CA Task::Plack XMLRPC::Transport::HTTP::Plack
+RUN useradd docker
+ARG APP_PORT
+EXPOSE $APP_PORT
+ARG WORK_DIR
+WORKDIR $WORK_DIR
+CMD ["/usr/bin/starman", "--pid", "/var/run/mt.pid", "--port", "${APP_PORT}", "--user", "docker", "--group", "docker", "mt.psgi"]

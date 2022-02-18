@@ -66,9 +66,37 @@ RUN yum -y install expat-devel "perl(ExtUtils::MakeMaker)" "perl(Test::Simple)" 
 # ===========================
 # Other：PSGI
 # ===========================
-RUN yum -y install "perl(CGI::Parse::PSGI)" "perl(Plack)"
-RUN yum -y install "perl(CGI)"
-RUN yum -y  install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
+RUN yum -y install "perl(Data::Dumper)" "perl(ExtUtils::Manifest)" "perl(ExtUtils::MakeMaker)"
+RUN yum -y install openssl-devel expat-devel perl-devel
+RUN yum -y groupinstall "Development Tools"
+RUN yum -y install curl
+#RUN curl -L http://cpanmin.us && perl - --sudo App::cpanminus
+RUN yum -y install perl-App-cpanminus
+RUN cpanm Task::Plack
+#RUN cpanm XMLRPC::Transport::HTTP::Plack
+#RUN echo "Install Starman and Dependancies from OpenFusion RPM repo";\
+#yum -y install http://repo.openfusion.net/centos7-x86_64/openfusion-release-0.8-1.of.el7.noarch.rpm;\
+#yum-config-manager --disable "of*";\
+#yum -y install perl-Starman --enablerepo=of \
+#RUN yum -y install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
+#RUN cpan XMLRPC::Transport::HTTP::Plack
+#RUN yum -y install perl-App-cpanminus
+#RUN yum -y install "perl(CGI::Parse::PSGI)" "perl(Plack)"
+#RUN yum -y install "perl(CGI)"
+#RUN yum -y  install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
+#perl-develはcpaminusに必要
+#RUN curl -o /etc/yum.repos.d/yarn.repo -LO https://cpanmin.us && perl - App::cpanminus
+#RUN /bin/sh -c curl -kL http://cpanmin.us | /usr/bin/perl - --sudo App::cpanminus
+
+
+#RUN rpm -qa | grep curl
+#RUN yum -y groupinstall "Development Tools"
+
+#RUN cpanm Task::Plack  入ってなかった（途中で止まる）
+#RUN cpanm XMLRPC::Transport::HTTP::Plack  入ってなかった
+#RUN curl -L https://cpanmin.us && perl - --sudo App::cpanminus \
+#cpanm Task::Plack \
+#cpanm XMLRPC::Transport::HTTP::Plack
 
 # ===========================
 # Other：ライブラリ
@@ -108,10 +136,19 @@ RUN mkdir -p /var/www/local/cgi-bin
 ADD mt-data/MT-7.0.zip /var/www/local/cgi-bin/
 RUN unzip '/var/www/local/cgi-bin/MT-7.0.zip' -d '/var/www/local/cgi-bin/'
 RUN mv /var/www/local/cgi-bin/MT-7.0 /var/www/local/cgi-bin/mt
+RUN mkdir -p /var/www/local/cgi-bin/mt/pids
+RUN mkdir -p /var/log/starman
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
 RUN chmod 777 /var/www/
 RUN chmod 777 /var/www/local
 RUN chmod 755 /var/www/local/cgi-bin/mt/*.cgi
+#COPY ./starman.service /usr/lib/systemd/system/
+#Enable Starman on boot
+#RUN systemctl enable starman.service
+
+ADD run.sh /run.sh
+RUN chmod +x /run.sh
 
 EXPOSE 80
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+#CMD ["sh", "run.sh"]
