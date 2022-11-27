@@ -2,7 +2,6 @@
 # FROM centos:latest
 # CentOS 7 固定指定
 FROM centos:7
-#FROM centos/perl-526-centos7
 MAINTAINER "redamoon"
 USER root
 RUN yum -y clean all

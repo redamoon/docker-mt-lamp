@@ -13,11 +13,13 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
-    env_file: .env.sample
+    env_file: .env
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
     volumes:
       - ./db-data:/var/lib/mysql
       - ./sql/test_data_mysql.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
+    ports:
+      - 3306:3306
   web:
     container_name: ${CONTAINER_BASE_NAME}-apache
     build: ./docker
@@ -26,11 +28,7 @@ services:
     volumes:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
-      - ./mtml:/var/www/local/cgi-bin/mt/themes
       - ./mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
-      - ./mt-settings/mt-static/mtml:/var/www/local/cgi-bin/mt/mt-static/themes
       - ./docker/httpd/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
-    privileged: true
-    command: /sbin/init
     depends_on:
       - mysql
