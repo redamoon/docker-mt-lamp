@@ -3,7 +3,7 @@
 # CentOS 7 固定指定
 FROM centos:7
 MAINTAINER "redamoon"
-
+USER root
 RUN yum -y clean all
 
 RUN rpm --import http://mirror.centos.org/centos/RPM-GPG-KEY-CentOS-7
@@ -39,7 +39,7 @@ RUN yum -y install http://rpms.famillecollet.com/enterprise/remi-release-7.rpm
 # ===========================
 # Perl・DB・Yumリポジトリ・CAPN
 # ===========================
-RUN yum -y install perl perl-CGI perl-CPAN "perl(Module::Build)" "perl(DBD::mysql)"
+RUN yum -y install perl-CGI perl-CPAN "perl(Module::Build)" "perl(DBD::mysql)"
 
 # ===========================
 # 必須モジュール
@@ -68,7 +68,7 @@ RUN yum -y install expat-devel "perl(ExtUtils::MakeMaker)" "perl(Test::Simple)" 
 # ===========================
 RUN yum -y install "perl(CGI::Parse::PSGI)" "perl(Plack)"
 RUN yum -y install "perl(CGI)"
-RUN yum -y  install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
+RUN yum -y install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
 
 # ===========================
 # Other：ライブラリ
