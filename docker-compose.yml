@@ -3,7 +3,32 @@ version: "3"
 
 # サービス定義
 services:
+  swagger-editor:
+    image: swaggerapi/swagger-editor
+    container_name: "swagger-editor"
+    ports:
+      - "8001:8080"
+  swagger-ui:
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui"
+    ports:
+      - "8002:8080"
+    volumes:
+      - ./api/swagger/data_api.yaml:/data_api.yaml
+    environment:
+      SWAGGER_JSON: /data_api.yaml
+  redoc:
+    image: redocly/redoc
+    container_name: "redoc"
+    volumes:
+      - ./api/redoc:/usr/share/nginx/html/openapi
+    environment:
+      SPEC_URL: ./openapi/openapi.json # Redocの画面を開いたときに初期値として表示するファイル
+      PORT: 8080 # nginx port(default:80)
+    ports:
+      - '8003:8080'
   mysql:
+    platform: linux/x86_64
     container_name: ${CONTAINER_BASE_NAME}-db
     image: mysql:5.7
     restart: always
@@ -21,10 +46,11 @@ services:
     ports:
       - 3306:3306
   web:
+    platform: linux/x86_64
     container_name: ${CONTAINER_BASE_NAME}-apache
     build: ./docker
     ports:
-      - "${PORT}"
+      - "${WEB_PORT}"
     volumes:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
