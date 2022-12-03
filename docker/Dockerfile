@@ -2,6 +2,8 @@
 # FROM centos:latest
 # CentOS 7 固定指定
 FROM centos:7
+ARG MT_FILE="local"
+RUN echo ${MT_FILE}
 MAINTAINER "redamoon"
 USER root
 RUN yum -y clean all
@@ -105,9 +107,9 @@ RUN mkdir -p /var/www/local/cgi-bin
 # ===========================
 # Movable Type Setting
 # ===========================
-ADD mt-data/MT-7.0.zip /var/www/local/cgi-bin/
-RUN unzip '/var/www/local/cgi-bin/MT-7.0.zip' -d '/var/www/local/cgi-bin/'
-RUN mv /var/www/local/cgi-bin/MT-7.0 /var/www/local/cgi-bin/mt
+ADD mt-data/${MT_FILE}.zip /var/www/local/cgi-bin/
+RUN unzip /var/www/local/cgi-bin/${MT_FILE}.zip -d '/var/www/local/cgi-bin/'
+RUN mv /var/www/local/cgi-bin/${MT_FILE} /var/www/local/cgi-bin/mt
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
 RUN chmod 777 /var/www/
 RUN chmod 777 /var/www/local

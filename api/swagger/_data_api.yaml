@@ -1,0 +1,1961 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Data API
+  description: >-
+    Movable Type Data API Swagger
+servers:
+  - url: 'http://localhost:11000/cgi-bin/mt/mt-data-api.cgi/v5/'
+tags:
+  - name: Authentication
+    description: Authentication でアクセストークン取得
+  - name: Site
+    description: Site の情報取得
+  - name: Content Types
+    description: Content Types の情報取得
+  - name: Content Data
+    description: Content Data の情報取得
+  - name: Content Fields
+    description: Content Fields の情報取得
+  - name: Category Set
+    description: Category Set の情報取得
+  - name: Assets
+    description: Assets の情報取得
+paths:
+  /authentication:
+    post:
+      tags:
+        - Authentication
+      description: >
+        Authentication : Authenticationでアクセストークン取得
+      parameters:
+        - $ref: '#/components/parameters/Username'
+        - $ref: '#/components/parameters/Password'
+        - $ref: '#/components/parameters/ClientId'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Authentication'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites:
+    get:
+      tags:
+        - Site
+      description: >
+        Site Collection : サイトの一覧情報取得
+      parameters:
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/SearchFields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/SiteSortBy'
+        - $ref: '#/components/parameters/SortOrder'
+        - $ref: '#/components/parameters/IncludeIds'
+        - $ref: '#/components/parameters/ExcludeIds'
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/DateField'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResults'
+                  - $ref: '#/components/schemas/SiteCollection'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/assets:
+    get:
+      tags:
+        - Assets
+      description: >
+        Assets : ファイルの情報取得
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResultsNumber'
+                  - $ref: '#/components/schemas/AssetsCollection'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/assets/{asset_id}:
+    get:
+      tags:
+        - Assets
+      description: >
+        Assets : ファイルの情報取得
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/AssetsId'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assets'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}:
+    get:
+      tags:
+        - Site
+      description: >
+        Site : サイト情報取得
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/Fields'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Site'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/categorySets:
+    get:
+      tags:
+        - Category Set
+      description: >
+        Category Set Collection : カテゴリセット一覧の情報取得
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/Search'
+        - $ref: '#/components/parameters/SearchFields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/CategorySetSortBy'
+        - $ref: '#/components/parameters/SortOrder'
+        - $ref: '#/components/parameters/IncludeIds'
+        - $ref: '#/components/parameters/ExcludeIds'
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/DateField'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResults'
+                  - $ref: '#/components/schemas/CategorySetCollection'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/categorySets/{category_set_id}:
+    get:
+      tags:
+        - Category Set
+      description: >
+        Category Set : カテゴリセットの情報取得
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/CategorySetId'
+        - $ref: '#/components/parameters/Fields'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorySet'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/categorySets/{category_set_id}/categories:
+    get:
+      tags:
+        - Category Set
+      description: >
+        Category Set Categories Collection : カテゴリセットのカテゴリ一覧取得
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/CategorySetId'
+        - $ref: '#/components/parameters/MaxDepth'
+        - $ref: '#/components/parameters/IncludeCurrent'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/SortOrder'
+        - $ref: '#/components/parameters/SearchFields'
+        - $ref: '#/components/parameters/DateField'
+        - $ref: '#/components/parameters/DateFrom'
+        - $ref: '#/components/parameters/DateTo'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResults'
+                  - $ref: '#/components/schemas/CategorySetCategoriesCollection'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/categorySets/{category_set_id}/categories/{category_id}:
+    get:
+      tags:
+        - Category Set
+      description: >
+        Category Set Category : カテゴリセットの特定のカテゴリを取得する
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/CategorySetId'
+        - $ref: '#/components/parameters/CategoryId'
+        - $ref: '#/components/parameters/Fields'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorySetCategory'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/contentTypes:
+    get:
+      tags:
+        - Content Types
+      description: |
+        - Content Types : コンテンツタイプ一覧の情報取得
+        - 取得には認証が必要です。
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/ContentTypesSortBy'
+        - $ref: '#/components/parameters/SortOrder'
+        - $ref: '#/components/parameters/IncludeIds'
+        - $ref: '#/components/parameters/ExcludeIds'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResults'
+                  - $ref: '#/components/schemas/ContentTypesCollection'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/contentTypes/{content_type_id}:
+    get:
+      tags:
+        - Content Types
+      description: |
+        - Content Types : コンテンツタイプの情報取得
+        - 取得には認証が必要です。
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/ContentTypeId'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ContentTypes'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/contentTypes/{content_type_id}/data:
+    get:
+      tags:
+        - Content Data
+      description: >
+        Content Data Collection : コンテンツデータ一覧の情報取得
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/ContentTypeId'
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/ContentDataAndContentFieldSortBy'
+        - $ref: '#/components/parameters/SortOrder'
+        - $ref: '#/components/parameters/IncludeIds'
+        - $ref: '#/components/parameters/ExcludeIds'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryFrom'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryTo'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryDateType'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryBefore'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryAfter'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryDays'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryFuture'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryPast'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryLabel'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryLabelEq'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryIdentifier'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryIdentifierEq'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryContentFieldId'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResults'
+                  - $ref: '#/components/schemas/ContentDataCollection'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/contentTypes/{content_type_id}/dataExtend:
+    get:
+      tags:
+        - Content Data
+      description: |
+        - Content Data Collection dataExtend : DataAPIExtendSearch v1.5.0 で追加された dataExtend エンドポイント
+        - description：このエンドポイントは、デフォルトのdataエンドポイントに加えてコンテンツフィールドのソートが可能になります。また、デフォルトのdataエンドポイントにはないページングpaginateオブジェクトが追加されます。
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/ContentTypeId'
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/IncludeIds'
+        - $ref: '#/components/parameters/ExcludeIds'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryContentFieldId'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQuerySortFieldName'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQuerySortFieldNameOrder'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryLimitPerPage'
+        - $ref: '#/components/parameters/DataAPIExtendSearchQueryPage'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResults'
+                  - $ref: '#/components/schemas/ContentDataCollection'
+                  - $ref: '#/components/schemas/Paginate'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/contentTypes/{content_type_id}/data/{content_data_id}:
+    get:
+      tags:
+        - Content Data
+      description: >
+        Content Data : コンテンツデータ詳細の情報取得 ※お知らせなどの詳細画面で利用する
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/ContentTypeId'
+        - $ref: '#/components/parameters/ContentDataId'
+        - $ref: '#/components/parameters/Fields'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentData'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+  /sites/{site_id}/contentTypes/{content_type_id}/fields:
+    get:
+      tags:
+        - Content Fields
+      description: |
+        - Content Data : コンテンツフィールドの情報取得 フィールドのID確認用
+        - 取得には認証が必要です。
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/ContentTypeId'
+        - $ref: '#/components/parameters/Fields'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/ContentDataAndContentFieldSortBy'
+        - $ref: '#/components/parameters/SortOrder'
+        - $ref: '#/components/parameters/IncludeIds'
+        - $ref: '#/components/parameters/ExcludeIds'
+      responses:
+        '200':
+          description: Response 200
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/TotalResults'
+                  - $ref: '#/components/schemas/ContentFields'
+        '403':
+          description: Response 403
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Response 404
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+
+components:
+  parameters:
+    AssetsId:
+      in: path
+      name: asset_id
+      description: The asset ID.
+      required: true
+      schema:
+        type: number
+    SiteId:
+      in: path
+      name: site_id
+      description: The site ID.
+      required: true
+      schema:
+        type: number
+    ContentTypeId:
+      in: path
+      name: content_type_id
+      description: The content type ID.
+      required: true
+      schema:
+        type: number
+    ContentDataId:
+      in: path
+      name: content_data_id
+      description: The content data ID.
+      required: true
+      schema:
+        type: number
+    CategorySetId:
+      in: path
+      name: category_set_id
+      description: The category set ID.
+      required: true
+      schema:
+        type: number
+    CategoryId:
+      in: path
+      name: category_id
+      description: The category ID.
+      required: true
+      schema:
+        type: number
+    ClientId:
+      in: query
+      name: clientId
+      description: クライアントID
+      required: true
+      schema:
+        type: string
+    Password:
+      in: query
+      name: password
+      description: Webパスワード
+      required: true
+      schema:
+        type: string
+    Username:
+      in: query
+      name: username
+      description: MTログインユーザ
+      required: true
+      schema:
+        type: string
+    DateField:
+      in: query
+      name: dateField
+      description: |
+        Specifies the field name to be used as a date field for filtering. (new in v3)
+        required: false
+      required: false
+      schema:
+        type: string
+    DateFrom:
+      name: dateFrom
+      in: query
+      description: |
+        The start date to filtering. Specify in “YYYY-MM-DD” format. (new in v3)
+      required: false
+      schema:
+        type: string
+    DateTo:
+      name: dateTo
+      in: query
+      description: |
+        The end date to filtering. Specify in “YYYY-MM-DD” format. (new in v3)
+      required: false
+      schema:
+        type: string
+    Search:
+      name: search
+      in: query
+      description: |
+        Search query.
+      required: false
+      schema:
+        type: string
+    SearchFields:
+      name: searchFields
+      in: query
+      description: |
+        The comma separated field name list to search. In this version, only name is available.
+      required: false
+      schema:
+        type: string
+    IncludeIds:
+      name: includeIds
+      in: query
+      description: |
+        The comma separated ID list of entries to include to result.
+      required: false
+      schema:
+        type: string
+    ExcludeIds:
+      name: excludeIds
+      in: query
+      description: |
+        The comma separated ID list of entries to exclude from result.
+      required: false
+      schema:
+        type: string
+    Fields:
+      in: query
+      name: fields
+      description: The field list to retrieve as part of the Content Data resource. That list should be separated by comma. If this parameter is not specified, All fields will be returned.
+      required: false
+      schema:
+        type: string
+    Limit:
+      in: query
+      name: limit
+      description: Maximum number of sites to retrieve.
+      required: false
+      schema:
+        type: number
+    Offset:
+      in: query
+      name: offset
+      description: 0-indexed offset.
+      required: false
+      schema:
+        type: string
+    ContentTypesSortBy:
+      in: query
+      name: sortBy
+      description: |
+        The field name for sort. You can specify one of following values.
+      required: false
+      schema:
+        type: string
+        enum: [ name, dataLabel, uniqueID, modified_on ]
+    CategorySetSortBy:
+      in: query
+      name: sortBy
+      description: |
+        The field name for sort. You can specify one of following values.
+      required: false
+      schema:
+        type: string
+        enum: [ id, name, created_on, modified_on, content_type_count ]
+    ContentDataAndContentFieldSortBy:
+      in: query
+      name: sortBy
+      description: |
+        The field name for sort. You can specify one of following values.
+      required: false
+      schema:
+        type: string
+        enum: [ id, uniqueID, authored_on, created_on, modified_on ]
+    SiteSortBy:
+      in: query
+      name: sortBy
+      description: |
+        The field name for sort. You can specify one of following values.
+      required: false
+      schema:
+        type: string
+        enum: [ name ]
+    SortBy:
+      in: query
+      name: sortBy
+      description: |
+        The field name for sort. You can specify one of following values.
+      required: false
+      schema:
+        type: string
+        enum: [id, uniqueID, authored_on, created_on, modified_on, label, basename, created_by, user_custom]
+    SortOrder:
+      in: query
+      name: sortOrder
+      description: |
+        - descend (default): Return content data in descending order.
+        - ascend: Return content data in ascending order.
+        required: false
+      schema:
+        type: string
+        enum: [descend, ascend]
+    MaxDepth:
+      name: maxDepth
+      in: query
+      description: |
+        The depth of retrieving parent categories.
+      required: false
+      schema:
+        type: number
+    IncludeCurrent:
+      name: includeCurrent
+      in: query
+      description: |
+        - 1: The list does not include current category.
+        - The list includes current category.
+      required: false
+      schema:
+        type: number
+    DataAPIExtendSearchQueryLabel:
+      in: query
+      name: label
+      description: |
+        ### 識別子でのフィルタリング
+        - ?label="識別子名"
+        - contains
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryLabelEq:
+      in: query
+      name: label_eq
+      description: |
+        ### 識別子でのフィルタリング
+        - ?label_eq="識別子名"
+        - equal
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryIdentifier:
+      in: query
+      name: identifier
+      description: |
+        ### 出力ファイル名でのフィルタリング
+        - ?identifier="出力ファイル名"
+        - contains
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryIdentifierEq:
+      in: query
+      name: identifier_eq
+      description: |
+        ### 出力ファイル名でのフィルタリング
+        - ?label_eq="出力ファイル名"
+        - equal
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryFrom:
+      in: query
+      name: from
+      description: |
+        ### From filter（期間）
+        - Data API Extend Search
+        - toと組み合わせが必須
+        - 2021-10-10
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryTo:
+      in: query
+      name: to
+      description: |
+        ### To filter（期間）
+        - Data API Extend Search
+        - fromと組み合わせが必須
+        - 2021-10-10
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryDateType:
+      in: query
+      name: date_type
+      description: |
+        ### date_type
+        - Data API Extend Search
+        - フィルタリングのqueryを利用する際は必須
+        - authored_on
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryBefore:
+      in: query
+      name: after
+      description: |
+        ### Before Filter（以前）
+        - Data API Extend Search
+        - 2021-10-10
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryAfter:
+      in: query
+      name: after
+      description: |
+        ### After Filter（以前）
+        - Data API Extend Search
+        - 2021-10-10
+      required: false
+      schema:
+        type: string
+    DataAPIExtendSearchQueryDays:
+      in: query
+      name: days
+      description: |
+        ### Days Filter（N日以内）
+        - Data API Extend Search
+        - 30
+      required: false
+      schema:
+        type: number
+    DataAPIExtendSearchQueryFuture:
+      in: query
+      name: future
+      description: |
+        ### Future Filter（未来）
+        - Data API Extend Search
+        - 1
+      required: false
+      schema:
+        type: number
+    DataAPIExtendSearchQueryPast:
+      in: query
+      name: past
+      description: |
+        ### Past Filter（過去）
+        - Data API Extend Search
+        - 1
+      required: false
+      schema:
+        type: number
+    DataAPIExtendSearchQueryContentFieldId:
+      in: query
+      name: content_field_id
+      description: |
+        ### ContentField Filter
+        - Data API Extend Search
+        - Format
+        {
+          "content_field_[ターゲットのフィールドのID]": "ヒットさせたい文字をいれる"
+        }
+      required: false
+      schema:
+        type: object
+        properties: { }
+        additionalProperties: false
+    DataAPIExtendSearchQuerySortFieldName:
+      in: query
+      name: sortFieldName
+      description: |
+        - sortの対象となるコンテンツフィールド名を入力
+      required: false
+      schema:
+        type: string
+        example: 記事公開日
+    DataAPIExtendSearchQuerySortFieldNameOrder:
+      in: query
+      name: sortFieldNameOrder
+      description: |
+        - descend (default): Return contentField in descending order.
+        - ascend: Return contentField in ascending order.
+      required: false
+      schema:
+        type: string
+        enum: [descend, ascend]
+    DataAPIExtendSearchQueryLimitPerPage:
+      in: query
+      name: limitPerPage
+      description: |
+        - 指定したレスポンスの件数を指定するクエリ
+      required: false
+      schema:
+        type: number
+    DataAPIExtendSearchQueryPage:
+      in: query
+      name: page
+      description: |
+        - 2ページ目以降を取得するクエリ
+      required: false
+      schema:
+        type: number
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-MT-Authorization
+      description: |
+        - accessTokenを発行して発行したトークンをMTAuthする
+        - curlコマンド: `curl -d 'username=ユーザ名' -d 'password=パスワード' -d "clientId=test" http://localhost:11000/cgi-bin/mt/mt-data-api.cgi/v4/authentication | jq`
+        - MTAuth accessToken=アクセストークン
+  schemas:
+    SiteCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/Site'
+          description: The array of result content.
+    Site:
+      type: object
+      properties:
+        allowCommenterRegist:
+          type: boolean
+          required: false
+          description: 'true: Allow visitors to register as members of this website using one of the Authentication Methods selected below. false: Not allowed.'
+        allowCommentHtml:
+          type: boolean
+          required: false
+          description: 'true: Allow commenters to include a limited set of HTML tags in their comments. false: All HTML will be stripped out.'
+        allowComments:
+          type: boolean
+          required: false
+          description: 'true: Accept comments. false: Do not accept comments.'
+        allowCommentsDefault:
+          type: boolean
+          required: false
+          description: 'The state of the comment acceptance of default in this site.  true: Comments are accepted. false: Comments are not accepted.'
+        allowPings:
+          type: boolean
+          required: false
+        allowPingsDefault:
+          type: boolean
+          required: false
+          description: 'The state of the comment acceptance of default in this site. Available value is follows. true: Trackbacks are accepted. false: Trackbacks are not accepted.'
+        allowToChangeAtUpload:
+          type: boolean
+          required: false
+          description: 'true: Allow user to change the upload destination when upload a file. false: Not allowed.'
+        allowUnregComments:
+          type: boolean
+          required: false
+          description: 'true: Allow comments from anonymous or unauthenticated users. false: Not allowed.'
+        archivePath:
+          type: string
+          required: false
+          description: The archive path for this site. This property only accepts absolute path.
+        archiveTypePreferred:
+          type: string
+          nullable: true
+          description: The preferred archive type for this site.
+        archiveUrl:
+          type: string
+          description: The archive url of this site. [Update in v2] This property was changed to updatable.
+        autodiscoverLinks:
+          type: boolean
+          required: false
+          description: 'true: Enable External TrackBack Auto-Discovery. false: Disable.'
+        autolinkUrls:
+          type: boolean
+          required: false
+          description: 'true: Transform URLs in comment text into HTML links. false: Do not transform.'
+        autoRenameNonAscii:
+          type: boolean
+          required: false
+          description: 'true: Uploded file name  will be automatically changed to randam filename if uploaded filename contains non-ascii character. false: File name is not changed.'
+        basenameLimit:
+          type: string
+          required: false
+          description: The maximum length of basename.
+        ccLicenseImage:
+          type: string
+          description: The URL for the Creative Commons License image for this site.
+        ccLicenseUrl:
+          type: string
+          description: The URL for the Creative Commons License url for this site.
+        class:
+          type: string
+          description: The object class for this site.
+        commenterAuthenticators:
+          type: array
+          required: false
+          description: Array of commenter authenticators for this site.
+        convertParasComments:
+          type: string
+          required: false
+          description: The text formatting of this site's comment.
+        contentCss:
+          type: string
+          nullable: true
+          description: The CSS applying to WYSIWYG editor of this site.
+        contentTypes:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: number
+              name:
+                type: string
+        convertParas:
+          type: string
+          required: false
+          description: 'The default text formatting in this site. Available value in default is follows. `0`: The default text formatting is ''None'' `__default__`: The default text formatting is ''Convert Line Breaks'' `markdown`: The default text formatting is ''Markdown'' `markdown_with_smartypants`: The default text formatting is ''Markdown With SmartyPants'' `richtext`: The default text formatting is ''Rich Text'' `textile_2`: The default text formatting is ''Textile 2'''
+        createdBy:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The ID of created user.
+            displayName:
+              type: string
+              description: The display name of created user.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of created user's userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, will be returned empty string.
+        createdDate:
+          type: string
+          description: The created time for this website. (format is iso 8601 datetime)
+        customDynamicTemplates:
+          type: string
+          required: false
+          description: 'Publishing profile for this site. Available value is follows. `none`: Immediately publish all index templates and archive templates statically. `all`: Publish all index templates and archive templates dynamically. `archives`: Publish all archive templates dynamically. Immediately publish all index templates statically. `async_all`: All index templates and archive templates published statically via Publish Que. `async_partial`: mmediately publish Main Index template, Page archives statically. Use Publish Queue to publish all other index templates and archive templates statically.'
+        customFields:
+          type: array
+          required: false
+        daysOrPosts:
+          type: string
+          required: false
+          description: 'The type of listing default. Available value is follows. `days`: Listing entries that written in the past N days. N is a value of listOnIndex. `posts`: Listing most recent N entries. N is a value of listOnIndex.'
+        dateLanguage:
+          type: string
+          description: 'The date locale settings for this site. Available valus is follow. `cz`: Czech / `dk`: Danish / `nl`: Dutch / `en`: English / `et`: Estonian / `fr`: French / `de`: German / `is`: Icelandic / `it`: Italian / `ja`: Japanese / `no`: Norwegian / `pl`: Polish / `pt`: Portuguese / `sk`: Slovak / `si`: Slovenian / `es`: Spanish / `fi`: Suomi / `se`: Swedish'
+        description:
+          type: string
+          nullable: true
+          description: The description of this site. [Update in v2] This property was changed to updatable.
+        dynamicCache:
+          type: boolean
+          required: false
+          description: 'Cannot set this property when dynamic templates does not exist. `true`: Dynamic cache for dynamic publishing is enabled. / `false`: Dynamic cache for dynamic publishing is disabled.'
+        dynamicConditional:
+          type: boolean
+          required: false
+          description: 'Cannot set this property when dynamic templates does not exist. `true`: Dynamic conditional retrieval of dynamic publishing is enabled. / `false`: Dynamic conditional retrieval of dynamic publishing is disabled.'
+        entryCustomPrefs:
+          type: array
+          required: false
+          description: 'Default displayed fields of this site''s entry. Available value is follows. `title`: Title field / `text`: Body and extended field / `category`: Category list / `excerpt`: Excerpt field / `keywords`: Keyword field / `tags`: Tags field / `feedback`: Comment and trackback setting field / `assets`: Entry assets list / customfield_basename: Each custom Fields'
+        emailNewComments:
+          type: string
+          description: 'Email notification when posting comment to this site. `0`: Off. / `1`: On. / `2`: Only when attension is required.'
+        emailNewPings:
+          type: string
+          description: '"Email notification setting when accepting trackback to this site. `0`: Off. / `1`: On. / `2`: Only when attention is required.'
+        extraPath:
+          type: string
+          required: false
+          description: The raw data of extra path for default upload destination. If extra path is not configured, this value is a blank string.
+        fileExtension:
+          type: string
+          required: false
+          description: The file extension for this site.
+        followAuthLinks:
+          type: boolean
+          required: false
+          description: '`true`: Do not add the ''nofollow'' attribute when a comment is submitted by a trusted commenter. / `false`: Add the ''nofollow'' attribute .'
+        host:
+          type: string
+          description: The host name of this site.
+        id:
+          type: number
+          description: The ID of this site.
+        includeCache:
+          type: boolean
+          description: '`true`: Module cache is enabled. / `false`: Module cache is disabled.'
+        includeSystem:
+          type: string
+          nullable: true
+          description: '`'''' (empty string)`: Server Side Includes is disabled. / `php`: Server Side Include is enabled with PHP. / `shtml`: Server Side Include is enabled with Apache SSI. / `asp`: Server Side Include is enabled with ASP. / `jsp`: Server Side Include is enabled with JSP.'
+        language:
+          type: string
+          description: 'The language for this site. Available value is follows. `de`: German / `en`: English / `es`: Spanish / `fl`: French / `nl`: Dutch / `ja`: Japanese'
+        internalAutodiscovery:
+          type: boolean
+          required: false
+          description: '`true`: Enable Internal TrackBack Auto-Discovery. / `false`: Disable.'
+        junkFolderExpiry:
+          type: string
+          description: The period for deleting spam comments and trackbacks.
+        junkScoreThreshold:
+          type: number
+          description: The spam score threshold of this site.
+        listOnIndex:
+          type: string
+          description: The number of entries shown in the list by default.
+        maxRevisionsEntry:
+          type: string
+          nullable: true
+          description: The number of revisions per entries and pages in this site.
+        maxRevisionsTemplate:
+          type: string
+          nullable: true
+          description: The number of revisions per templates in this site.
+        moderateComments:
+          type: string
+          description: |-
+            `0`: Anyone. / `1`: No one. / `2`: Trusted commenters only. / `3`: Any authenticated commenters.
+            moderatePings (boolean) - `true`: Hold all TrackBacks for approval before they are published. / `false`: Do not hold.
+        modifiedDate:
+          type: string
+          description: The last modified time for this website. (format is iso 8601 datetime)
+        name:
+          type: string
+          description: The name for this site. [Update in v2] This property was changed to updatable.
+        newCreatedUserRoles:
+          type: array
+          required: false
+          description: Assigned to users that are created in the future on this site.
+        nofollowUrls:
+          type: boolean
+          required: false
+          description: '`true`: All URLs in comments and TrackBacks will be assigned a ''nofollow'' link relation. / `false`: Not assigned.'
+        normalizeOrientation:
+          type: boolean
+          required: false
+          description: '`true`: Image orientation is normalized automatically when the image file contains orientation information. / `false`: Image orientation is will never normalized.'
+        operationIfExists:
+          oneOf:
+            - type: number
+            - type: string
+          description: '`1`: The upload file will be changed to random file name automatically. / `2`: The existing file will be overwritten. / `3`: Upload will be canceled.'
+        pageCustomPrefs:
+          type: array
+          items:
+            type: string
+          description: 'Default displayed fields of this site''s page. Available value is follows. `title`: Title field / `text`: Body and extended field / `category`: Category list / `excerpt`: Excerpt field / `keywords`: Keyword field / `tags`: Tags field / `feedback`: Comment and trackback setting field / `assets`: Page assets list / `customfield_basename`: Each custom Fields'
+        parent:
+          type: object
+          nullable: true
+          properties:
+            id:
+              type: string
+              description: The ID of parent website.
+            name:
+              type: string
+              description: The name of parent website.
+          description: The parent website of this blog. If this object is top level sige, this field must be null.
+        publishEmptyArchive:
+          type: boolean
+          required: false
+          description: '`true`: Category archive without entries is published. / `false`: Category archive without entries is not published.'
+        pingGoogle:
+          type: boolean
+          required: false
+          description: '`true`: Enable sending update ping to Google. / `false`: Disabled sending update ping to Google.'
+        pingWeblogs:
+          type: boolean
+          required: false
+          description: '`true`: Enable sending update ping to weblogs.com. / `false`: Disabled sending update ping to weblogs.com.'
+        pingOthers:
+          type: array
+          items:
+            type: string
+            description: Array of update ping services.
+          description: Array of update ping services.
+        relativeUrl:
+          type: string
+          description: The relative site url of this site.
+        requireCommentEmails:
+          type: boolean
+          required: false
+          description: '`true`: Require name and E-mail Address for Anonymous Comments. / `false`: Do not require.'
+        sanitizeSpec:
+          type: string
+          required: false
+          description: The limit html tags of this site's comment. "0" is default.
+        serverOffset:
+          type: string
+          description: The server offset for this site.
+        sitePath:
+          type: string
+          required: false
+          description: The site path for this site. This property only accepts absolute path.
+        smartReplace:
+          type: number
+          required: false
+          description: 'The punctuation replacement of this site. `0`: No substitution.  / `1`: Character entities. / `2`: ASCII equivalents.'
+        sortOrderPosts:
+          type: string
+          required: false
+          description: 'The default sorting direction for the entry listing. Available value is follows. `ascend`: Ascengin order. / `descend`: Descending order.'
+        sortOrderComments:
+          type: string
+          required: false
+          description: 'The comment order of this site. Available value is follows. `ascend`: Ascending order. / `descend`: Descending order'
+        smartReplaceFields:
+          type: array
+          items:
+            type: string
+          description: Replace fields of this site.
+        statusDefault:
+          type: string
+          required: false
+          description: 'The default entry status in this site. Available value is follows. `Pubish`: The default status is ''Published'' / `Draft`: The default status is ''Unpublished'''
+        themeId:
+          type: string
+          required: false
+          description: The theme ID for this site.
+        timezone:
+          type: string
+          description: The timezone of this site.
+        updatable:
+          type: boolean
+          description: '`true`: Current user can update this website. / `false`: Current user cannot update this website.'
+        uploadDestination:
+          type: object
+          properties:
+            path:
+              type: string
+            raw:
+              type: string
+          description: |-
+            The default configuration for upload destination of this site.
+            path (string) - The full path for default upload destination. The value begin with site path and contains extra path if extra_path configured. If default upload destination is not configured, this value is just a same as site_path.
+            raw (string) - The raw data of default upload destination. If default upload destination is not configured, this value is a blank string.
+        url:
+          type: string
+          description: The site url of this site.  [Update in v2] This property was changed to updatable.
+        useCommentConfirmation:
+          type: boolean
+          required: false
+          description: '`true`: Each commenter''s browser will be redirected to a comment confirmation page after their comment is accepted. / `false`: Will not.'
+        useRevision:
+          type: boolean
+          required: false
+          description: '`true`: Revision history is enabled. / `false`: Revision history is disabled.'
+        wordsInExcerpt:
+          type: string
+          required: false
+          description: The default length for excerpt.
+    ContentTypesCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ContentTypes'
+          description: The array of result content.
+    ContentTypes:
+      type: object
+      properties:
+        blog:
+          type: object
+          properties:
+            id:
+              type: number
+              description: The site ID. Not writable.
+          description: The site of this content type. Not writable.
+        contentFields:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              label:
+                type: string
+              type:
+                type: string
+              uniqueID:
+                type: string
+          description: The list of content fields.
+        createdBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of this content type creator. Not writable.
+            id:
+              type: number
+              description: The ID of this content type creator. Not writable.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of this content type creator's userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, will be returned empty string. Not writable.
+          description: Created user of this content type. Not writable.
+        createdDate:
+          type: string
+          description: Created date of this content type. (format is iso 8601 datetime) Not writable.
+        dataLabel:
+          type: string
+          description: The Unique ID of the content field that is data label. If not set will be NULL.
+        description:
+          type: string
+          description: The description of this content type.
+        id:
+          type: number
+          description: The ID of this content type. Not writable.
+        modifiedBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of this content type modifier. Not writable.
+            id:
+              type: number
+              description: The ID of this content type modifier. Not writable.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of this content type modifier's userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, will be returned empty string. Not writable.
+          description: Last modified user of this content type. Not writable.
+        modifiedDate:
+          type: string
+          description: Last modified date of this content type. (format is iso 8601 datetime) Not writable.
+        name:
+          type: string
+          description: The name of this content type.
+        uniqueID:
+          type: string
+          description: The unique ID of this content type. Not writable.
+        updatable:
+          type: boolean
+          description: '`true`: Current user can update this content type. / `false`: Current user cannot update this content type.  Not writable.'
+        userDisplayOption:
+          type: boolean
+          description: '`true`: Signed-in user can change display options for edit content data screen of this content type in the CMS admin screen. / `false`: Signed-in user cannot change display options for edit content data screen of this content type in the CMS admin screen.'
+    ContentDataCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/ContentData'
+          description: The array of result content.
+    ContentData:
+      type: object
+      properties:
+        author:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of this content data creator. Not writable
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of this content data creator's userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, will be returned empty string. Not writable
+        basename:
+          type: string
+          description: The identifier for this content data.
+        blog:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The ID of the site that contains this cotent data. Not writable
+        createdDate:
+          type: string
+          description: Created date of this content data. (format is iso 8601 datetime) Not writable.
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              data:
+                type: string
+                nullable: true
+              id:
+                type: string
+              label:
+                type: string
+              type:
+                type: string
+            description: List of data of this content data.
+        date:
+          type: string
+          description: The published time for this content data. (format is iso 8601 datetime)
+        id:
+          type: number
+          description: The ID of this content data.  Not writable.
+        label:
+          type: string
+          description: The label value of this data.
+        modifiedDate:
+          type: string
+          description: Last modified date of this content data. (format is iso 8601 datetime) Not writable.
+        permalink:
+          type: string
+          description: permalink
+        status:
+          type: string
+          description: 'Draft: This content data is saved as draft. cd_status is 1. Publish: This content data is published. cd_status is 2. Review: This content data is waiting for approval. cd_status is 3. Future: This content data is scheduled for future publishing. cd_status is 4. Spam: This content data is marked as Spam. cd_status is 5.'
+        updatable:
+          type: boolean
+          description: 'true: The user who accessed can update this contnt data. false: The user who accessed cannot update this content data.'
+        relations:
+          type: object
+          properties:
+            CategoryDepartment:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: string
+                  basename:
+                    type: string
+                  label:
+                    type: string
+                  parentId:
+                    type: string
+              description: '学科カテゴリのレスポンス'
+            CategoryKinds:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: string
+                  basename:
+                    type: string
+                  label:
+                    type: string
+                  parentId:
+                    type: string
+              description: '種別カテゴリのレスポンス'
+            CategorySubject:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: string
+                  basename:
+                    type: string
+                  label:
+                    type: string
+                  parentId:
+                    type: string
+              description: '対象カテゴリのレスポンス'
+            CategoryUndergraduate:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: string
+                  basename:
+                    type: string
+                  label:
+                    type: string
+                  parentId:
+                    type: string
+              description: '学部カテゴリのレスポンス'
+            OGP:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: string
+                  fileName:
+                    type: string
+                  path:
+                    type: string
+                  url:
+                    type: string
+              description: 'OGP画像のレスポンス'
+            MainVisual:
+              type: array
+              items:
+                properties:
+                  id:
+                    type: string
+                  fileName:
+                    type: string
+                  path:
+                    type: string
+                  url:
+                    type: string
+              description: 'key名は、カテゴリセット・アセットのフィールド名'
+          description: DataAPIContentDataRelations plugin response
+    CategorySetCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/CategorySet'
+          description: The array of result content.
+    CategorySetCategoriesCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/CategorySetCategory'
+          description: The array of result content.
+    AssetsCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/Assets'
+          description: The array of result content.
+    Assets:
+      type: object
+      properties:
+        blog:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The ID of the site that contains this category.
+        class:
+          type: string
+          description: The object class for this category.
+        createdBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of the user who created this category.
+            id:
+              type: string
+              description: The ID of the user who created this category.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of created user’s userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, empty string will be returned.
+        createdDate:
+          type: string
+          description: he created time for this category. (format is iso 8601 datetime)
+        customFields:
+          type: array
+        description:
+          type: string
+          nullable: true
+          description: The description of this category.
+        fileExtension:
+          type: string
+        filename:
+          type: string
+        id:
+          type: string
+          description: The ID of this category.
+        label:
+          type: string
+          description: The label of this category.
+        modifiedBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of the user who modified this category.
+            id:
+              type: string
+              description: The ID of the user who modified this category.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of modified user’s userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, empty string will be returned.
+        modifiedDate:
+          type: string
+          description: The last modified time for this category. (format is iso 8601 datetime)
+        parent:
+          type: number
+          nullable: true
+          description: The ID of the parent category for this category. This field can be updated from v2.
+        meta:
+          type: object
+          properties:
+            fileSize:
+              type: number
+            height:
+              type: string
+            width:
+              type: string
+        mimeType:
+          type: string
+        tags:
+          type: array
+        type:
+          type: string
+        url:
+          type: string
+        updatable:
+          type: boolean
+          description: |-
+            true: The user who accessed can update this category.
+            false: The user who accessed cannot update this category.
+      description: The array of result content.
+    TotalResultsNumber:
+      type: object
+      properties:
+        totalResults:
+          type: number
+          description: Total record count of this request.
+    TotalResults:
+      type: object
+      properties:
+        totalResults:
+          type: string
+          description: Total record count of this request.
+    Paginate:
+      type: object
+      properties:
+        paginate:
+          type: object
+          properties:
+            currentPage:
+              type: number
+            limit:
+              type: number
+            maxPage:
+              type: number
+            nextPage:
+              type: number
+            offset:
+              type: number
+            prevPage:
+              type: number
+    CategorySetCategory:
+      type: object
+      properties:
+        archiveLink:
+          type: string
+          description: The category archive URL of this category. If “Category” archive mapping is not configured, this value will be null.
+        basename:
+          type: string
+          description: The basename of this category.
+        blog:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The ID of the site that contains this category.
+        class:
+          type: string
+          description: The object class for this category.
+        createdBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of the user who created this category.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of created user’s userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, empty string will be returned.
+        createdDate:
+          type: string
+          description: he created time for this category. (format is iso 8601 datetime)
+        customFields:
+          type: array
+        description:
+          type: string
+          description: The description of this category.
+        id:
+          type: number
+          description: The ID of this category.
+        label:
+          type: string
+          description: The label of this category.
+        modifiedBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of the user who modified this category.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of modified user’s userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, empty string will be returned.
+        modifiedDate:
+          type: string
+          description: The last modified time for this category. (format is iso 8601 datetime)
+        parent:
+          type: string
+          description: The ID of the parent category for this category. This field can be updated from v2.
+        updatable:
+          type: boolean
+          description: |-
+            true: The user who accessed can update this category.
+            false: The user who accessed cannot update this category.
+    CategorySet:
+      type: object
+      properties:
+        blog:
+          type: object
+          properties:
+            id:
+              type: string
+              description: The ID of the site that contains this category set. Not writable
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              basename:
+                type: string
+              id:
+                type: number
+              label:
+                type: string
+              parent:
+                type: string
+          description: List of categories. Not writable.
+        content_type_count:
+          type: string
+        createdBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of this category set created. Not writable.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of this category set created's userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, will be returned empty string. Not writable.
+          description: Last modified user of this category set. Not writable.
+        createdDate:
+          type: string
+          description: Created date of this category set. (format is iso 8601 datetime) Not writable.
+        id:
+          type: number
+          description: The ID of this category set. Not writable.
+        modifiedBy:
+          type: object
+          properties:
+            displayName:
+              type: string
+              description: The display name of this category set modifier. Not writable.
+            userpicUrl:
+              type: string
+              nullable: true
+              description: The URL of this category set modifier's userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, will be returned empty string. Not writable.
+          description: Last modified user of this category set. Not writable.
+        modifiedDate:
+          type: string
+          description: Last modified date of this category set. (format is iso 8601 datetime) Not writable.
+        name:
+          type: string
+          description: The name of this category set.
+        updatable:
+          type: boolean
+          description: 'true: The user who accessed can update this category set. false: The user who accessed cannot update this category set.'
+    ContentFields:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              blog:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the site that contains this category.
+              createdBy:
+                type: object
+                properties:
+                  displayName:
+                    type: string
+                    description: The display name of the user who created this category.
+                  id:
+                    type: string
+                    description: The ID of the user who created this category.
+                  userpicUrl:
+                    type: string
+                    nullable: true
+                    description: The URL of created user’s userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, empty string will be returned.
+              createdDate:
+                type: string
+                description: he created time for this category. (format is iso 8601 datetime)
+              description:
+                type: string
+                nullable: true
+                description: The description of this category.
+              id:
+                type: string
+                description: The ID of this category.
+              label:
+                type: string
+                description: The label of this category.
+              modifiedBy:
+                type: object
+                properties:
+                  displayName:
+                    type: string
+                    description: The display name of the user who modified this category.
+                  id:
+                    type: string
+                    description: The ID of the user who modified this category.
+                  userpicUrl:
+                    type: string
+                    nullable: true
+                    description: The URL of modified user’s userpic. The userpic will be made by UserpicThumbnailSize and UserpicAllowRect settings. If user does not set own userpic, empty string will be returned.
+              modifiedDate:
+                type: string
+                description: The last modified time for this category. (format is iso 8601 datetime)
+              options:
+                type: object
+                properties:
+                  can_add:
+                    type: string
+                  allow_upload:
+                    type: string
+                  increase_decrease_cols:
+                    type: string
+                  increase_decrease_rows:
+                    type: string
+                  initial_cols:
+                    type: string
+                  initial_rows:
+                    type: string
+                  source:
+                    type: string
+                  category_set:
+                    type: string
+                  description:
+                    type: string
+                    description: Field Description
+                  display:
+                    type: string
+                  initial_value:
+                    type: string
+                  label:
+                    type: string
+                  max_length:
+                    type: string
+                  min_length:
+                    type: string
+                  required:
+                    type: string
+                    description: '0か1'
+                  input_format:
+                    type: string
+                  decimal_places:
+                    type: number
+                  max_value:
+                    type: string
+                  min_value:
+                    type: string
+                  max:
+                    type: string
+                  min:
+                    type: string
+                  multiple:
+                    type: string
+                  values:
+                    type: array
+                    properties:
+                      checked:
+                        type: string
+                      label:
+                        type: string
+                      value:
+                        type: string
+              type:
+                type: string
+                description: Field Type
+              uniqueID:
+                type: string
+                description: Unique ID
+              updatable:
+                type: boolean
+                description: |-
+                  true: The user who accessed can update this category.
+                  false: The user who accessed cannot update this category.
+          description: The array of result content.
+    Authentication:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        expiresIn:
+          type: string
+        remember:
+          type: boolean
+        sessionId:
+          type: string
+    Error403:
+      type: "object"
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: number
+              example: 403
+            message:
+              type: string
+              example: Do not have permission to create child site.
+    Error404:
+      type: "object"
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: number
+              example: 404
+            message:
+              type: string
+              example: Site not found
+security:
+  - ApiKeyAuth: []     # use the same name as under securitySchemes
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
