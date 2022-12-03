@@ -14,19 +14,19 @@ services:
     ports:
       - "8002:8080"
     volumes:
-      - ./api/swagger/data_api.yaml:/data_api.yaml
+      - ./api/swagger/_data_api.yaml:/_data_api.yaml
     environment:
-      SWAGGER_JSON: /data_api.yaml
+      SWAGGER_JSON: /_data_api.yaml
   redoc:
     image: redocly/redoc
     container_name: "redoc"
-    volumes:
-      - ./api/redoc:/usr/share/nginx/html/openapi
     environment:
       SPEC_URL: ./openapi/openapi.json # Redocの画面を開いたときに初期値として表示するファイル
       PORT: 8080 # nginx port(default:80)
     ports:
       - '8003:8080'
+    volumes:
+      - ./api/redoc:/usr/share/nginx/html/openapi
   mysql:
     platform: linux/x86_64
     container_name: ${CONTAINER_BASE_NAME}-db
@@ -48,7 +48,10 @@ services:
   web:
     platform: linux/x86_64
     container_name: ${CONTAINER_BASE_NAME}-apache
-    build: ./docker
+    build:
+      context: ./docker
+      args:
+        MT_FILE: "${MT}"
     ports:
       - "${WEB_PORT}"
     volumes:
