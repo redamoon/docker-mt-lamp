@@ -113,6 +113,7 @@ RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.c
 RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
+RUN mkdir -p /var/www/local/html
 RUN mkdir -p /var/www/local/cgi-bin
 
 # ===========================
@@ -121,9 +122,11 @@ RUN mkdir -p /var/www/local/cgi-bin
 ADD mt-data/${MT_FILE}.zip /var/www/local/cgi-bin/
 RUN unzip /var/www/local/cgi-bin/${MT_FILE}.zip -d '/var/www/local/cgi-bin/'
 RUN mv /var/www/local/cgi-bin/${MT_FILE} /var/www/local/cgi-bin/mt
+RUN chown -R apache:apache /var/www/local/html
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
 RUN chmod 777 /var/www/
 RUN chmod 777 /var/www/local
+RUN chmod 777 /var/www/local/html
 RUN chmod 755 /var/www/local/cgi-bin/mt/*.cgi
 
 EXPOSE 80
