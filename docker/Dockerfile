@@ -68,14 +68,17 @@ RUN cpan XML::SAX::Expat
 # ===========================
 # Other：PSGI
 # ===========================
+RUN dnf -y install --skip-broken "perl(CGI::Parse::PSGI)" "perl(Plack)"
+RUN dnf -y install --skip-broken "perl(CGI)"
+RUN dnf -y install --skip-broken "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
 #RUN cpan Devel::StackTrace CGI::Parse::PSGI Plack CGI
 #RUN cpan SOAP::Transport::HTTP XMLRPC::Transport::HTTP #cpanだと時間がかかりすぎてタイムアウトする
 
 # ===========================
 # Other：ライブラリ
 # ===========================
-#RUN dnf -y install "perl(Authen::SASL)" "perl(Crypt::SSLeay)" "perl(Crypt::DSA)" "perl(Digest::SHA)" "perl(Digest::SHA1)" "perl(HTML::Parser)" "perl(XML::Parser)" "perl(YAML::Syck)"
-#RUN dnf -y install "perl(Heap::Fibonacci)" "perl(File::NFSLock)" "perl(IO::String)" "perl(DB_File)" "perl(HTTP::Date)" "perl(Text::CSV_XS)" "perl(MIME::Parser)" "perl(LWP::UserAgent)" "perl(Scalar::Util)" "perl(CGI::Cookie)" "perl(File::Spec)" "perl(parent)"
+RUN dnf -y install --skip-broken "perl(Authen::SASL)" "perl(Crypt::SSLeay)" "perl(Crypt::DSA)" "perl(Digest::SHA)" "perl(Digest::SHA1)" "perl(HTML::Parser)" "perl(XML::Parser)"
+RUN dnf -y install --skip-broken "perl(Heap::Fibonacci)" "perl(File::NFSLock)" "perl(IO::String)" "perl(DB_File)" "perl(HTTP::Date)" "perl(Text::CSV_XS)" "perl(MIME::Parser)" "perl(LWP::UserAgent)" "perl(Scalar::Util)" "perl(CGI::Cookie)" "perl(File::Spec)" "perl(parent)"
 
 # ===========================
 # php
