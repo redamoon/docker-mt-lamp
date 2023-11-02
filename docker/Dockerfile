@@ -1,13 +1,15 @@
 # Rocky Linuxの最新を指定
 FROM rockylinux/rockylinux:latest
+RUN echo /etc/redhat-release
 ARG MT_FILE="local"
 RUN echo ${MT_FILE}
 MAINTAINER "redamoon"
 USER root
 RUN dnf -y clean all
 
-# CentOSのGPGキーの代わりにRocky LinuxのGPGキーをインポートする
-
+# ===========================
+# Perl Tools
+# ===========================
 RUN dnf install -y perl perl-App-cpanminus perl-devel
 
 RUN perl -v
@@ -15,20 +17,9 @@ RUN perl -v
 # ===========================
 # Locale Setting
 # ===========================
-RUN #dnf -y install langpacks-ja glibc-langpack-ja.x86_64
-#RUN localectl set-locale LANG=ja_JP.utf8
-#RUN source /etc/locale.conf
-#RUN timedatectl set-timezone Asia/Tokyo
-#RUN rm -f /etc/rpm/macros.image-language-conf && \
-#    sed -i '/^override_install_lang=/d' /etc/yum.conf && \
-#    dnf -y reinstall glibc-common && \
-#    dnf clean all
-#
-#ENV LANG="ja_JP.UTF-8" \
-#    LANGUAGE="ja_JP:ja" \
-#    LC_ALL="ja_JP.UTF-8"
-#RUN unlink /etc/localtime
-#RUN ln -s /usr/share/zoneinfo/Japan /etc/localtime
+RUN cd ~/ \
+  && dnf -y install langpacks-ja \
+  && localectl set-locale LANG=ja_JP.UTF-8; exit 0
 
 # ===========================
 # Base Package
@@ -53,35 +44,32 @@ RUN dnf -y install "perl(Image::Magick)" "perl(Digest::MD5)" "perl(Mozilla::CA)"
 # ===========================
 # Memcached
 # ===========================
-#RUN dnf -y install memcached "perl(Cache::Memcached)"
+RUN dnf -y install memcached "perl(Cache::Memcached)"
 
 # ===========================
 # SMTP認証関連ライブラリー
 # ===========================
-#RUN dnf -y install "perl(IO::Socket::SSL)" "perl(Net::SSLeay)" "perl(Net::SMTP::SSL)" "perl(Net::SMTP::TLS)"
-#RUN dnf -y install "perl(Digest::HMAC)"
+RUN dnf -y install "perl(IO::Socket::SSL)" "perl(Net::SSLeay)" "perl(Net::SMTP::SSL)"
+RUN dnf -y install "perl(Digest::HMAC)"
 
-#RUN dnf -y install "perl(IO::Socket::SSL)" "perl(Net::SSLeay)" "perl(Net::SMTP::SSL)"
-#RUN cpan Net::SMTP::TLS
-#RUN dnf -y install "perl(Digest::HMAC)"
+RUN dnf -y install "perl(IO::Socket::SSL)" "perl(Net::SSLeay)" "perl(Net::SMTP::SSL)"
+RUN cpan Net::SMTP::TLS
+RUN dnf -y install "perl(Digest::HMAC)"
+RUN cpan Net::SMTP::TLS
 
 # ===========================
 # Other：バックアップ
 # ===========================
-#RUN dnf -y install "perl(Archive::Zip)" "perl(Archive::Tar)" "perl(XML::LibXML::SAX)" "perl(XML::SAX::Expat)"
-#RUN dnf -y install expat-devel "perl(ExtUtils::MakeMaker)" "perl(Test::Simple)" "perl(XML::Parser)"
-#RUN dnf -y install "perl(Archive::Zip)" "perl(Archive::Tar)" "perl(XML::LibXML::SAX)"
-#RUN cpan XML::SAX::Expat
+RUN dnf -y install "perl(Archive::Zip)" "perl(Archive::Tar)" "perl(XML::LibXML::SAX)"
+RUN dnf -y install expat-devel "perl(ExtUtils::MakeMaker)" "perl(Test::Simple)" "perl(XML::Parser)"
+RUN dnf -y install "perl(Archive::Zip)" "perl(Archive::Tar)" "perl(XML::LibXML::SAX)"
+RUN cpan XML::SAX::Expat
 
 # ===========================
 # Other：PSGI
 # ===========================
-#RUN dnf -y install "perl(CGI::Parse::PSGI)" "perl(Plack)"
-#RUN dnf -y install "perl(CGI)"
-#RUN dnf -y install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
-
-#RUN dnf -y install "perl(Devel::StackTrace)" "perl(CGI::Parse::PSGI)" "perl(Plack)"
-#RUN dnf -y install "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
+#RUN cpan Devel::StackTrace CGI::Parse::PSGI Plack CGI
+#RUN cpan SOAP::Transport::HTTP XMLRPC::Transport::HTTP #cpanだと時間がかかりすぎてタイムアウトする
 
 # ===========================
 # Other：ライブラリ
