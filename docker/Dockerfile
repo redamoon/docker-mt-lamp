@@ -1,11 +1,11 @@
 # Rocky Linuxの最新を指定
-FROM rockylinux/rockylinux:latest
+FROM rockylinux:9.2
 RUN echo /etc/redhat-release
 ARG MT_FILE="local"
 RUN echo ${MT_FILE}
 MAINTAINER "redamoon"
 USER root
-RUN dnf -y clean all
+RUN dnf -y update && dnf clean all
 
 # ===========================
 # Perl Tools
@@ -24,12 +24,12 @@ RUN cd ~/ \
 # ===========================
 # Base Package
 # ===========================
-RUN dnf -y install git unzip glibc httpd httpd-devel
+RUN dnf -y install git unzip glibc httpd httpd-tools mod_ssl openssl expect
 
 # Remi リポジトリの追加
 # Rocky LinuxでもEPELリポジトリは利用できますが、RemiリポジトリのURLが変更される可能性があるので確認してください。
 RUN dnf -y install epel-release
-RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
 
 # ===========================
 # Perl・DB・Dnfリポジトリ・CAPN
@@ -81,29 +81,18 @@ RUN dnf -y install --skip-broken "perl(Authen::SASL)" "perl(Crypt::SSLeay)" "per
 RUN dnf -y install --skip-broken "perl(Heap::Fibonacci)" "perl(File::NFSLock)" "perl(IO::String)" "perl(DB_File)" "perl(HTTP::Date)" "perl(Text::CSV_XS)" "perl(MIME::Parser)" "perl(LWP::UserAgent)" "perl(Scalar::Util)" "perl(CGI::Cookie)" "perl(File::Spec)" "perl(parent)"
 
 # ===========================
-# php
-# ===========================
-#RUN dnf -y install --enablerepo=remi,remi-php82 php php-devel php-mbstring php-pdo php-gd php-xml php-mcrypt php-mysqlnd && \
-#    dnf clean all && \
-#    sed -i -e "s/;date.timezone *=.*$/date.timezone = Asia\/Tokyo/" /etc/php.ini && \
-#    sed -i -e "s/;mbstring.language *=.*$/mbstring.language = Japanese/" /etc/php.ini && \
-#    sed -i -e "s/;mbstring.internal_encoding *=.*$/mbstring.internal_encoding = UTF-8/" /etc/php.ini && \
-#    sed -i -e "s/;mbstring.http_input *=.*$/mbstring.http_input = UTF-8/" /etc/php.ini && \
-#    sed -i -e "s/;mbstring.http_output *=.*$/mbstring.http_output = pass/" /etc/php.ini && \
-#    sed -i -e "s/;mbstring.encoding_translation *=.*$/mbstring.encoding_translation = On/" /etc/php.ini && \
-#    sed -i -e "s/;mbstring.detect_order *=.*$/mbstring.detect_order = pass/" /etc/php.ini && \
-#    sed -i -e "s/;mbstring.substitute_charset *=.*$/mbstring.substitute_charset = none/" /etc/php.ini
-
-# ===========================
 # Httpd Setting
 # ===========================
+RUN sed -i 's/^SSLCertificateFile/#&/' /etc/httpd/conf.d/ssl.conf
+RUN sed -i 's/^SSLCertificateKeyFile/#&/' /etc/httpd/conf.d/ssl.conf
+RUN echo "ServerName localhost" >> /etc/httpd/conf/httpd.conf
 RUN sed -i.org '/#AddHandler cgi-script/s/#//' /etc/httpd/conf/httpd.conf
 RUN sed -i    "/^#NameVirtualHost \*:80$/ s/#NameVirtualHost \*:80/NameVirtualHost \*:80/" /etc/httpd/conf/httpd.conf
 RUN sed -i -e "s/KeepAlive Off/KeepAlive On/g" /etc/httpd/conf/httpd.conf
 RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.conf
 RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/httpd/conf/httpd.conf
-RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
-RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
+#RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
+#RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
 RUN mkdir -p /var/www/local/html
 RUN mkdir -p /var/www/local/cgi-bin
 
@@ -121,4 +110,5 @@ RUN chmod 777 /var/www/local/html
 RUN chmod 755 /var/www/local/cgi-bin/mt/*.cgi
 
 EXPOSE 80
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+#CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+CMD ["/bin/bash"]
