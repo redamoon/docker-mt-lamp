@@ -1,11 +1,10 @@
 # Local development environment
 
 - Docker
-- CeontOS 7
+- Rocky Linux 8
 - Apache
 - MySQL 5.7
 - Perl
-- PHP 7.2.9
 - Movable Type
 - Swagger
 - Redocly
