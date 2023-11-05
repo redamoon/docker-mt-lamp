@@ -4,11 +4,13 @@ version: "3"
 # サービス定義
 services:
   swagger-editor:
+    platform: linux/x86_64
     image: swaggerapi/swagger-editor
     container_name: "swagger-editor"
     ports:
       - "8001:8080"
   swagger-ui:
+    platform: linux/x86_64
     image: swaggerapi/swagger-ui
     container_name: "swagger-ui"
     ports:
@@ -18,6 +20,7 @@ services:
     environment:
       SWAGGER_JSON: /_data_api.yaml
   redoc:
+    platform: linux/x86_64
     image: redocly/redoc
     container_name: "redoc"
     environment:
