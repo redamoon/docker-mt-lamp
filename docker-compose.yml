@@ -3,33 +3,33 @@ version: "3"
 
 # サービス定義
 services:
-  swagger-editor:
-    platform: linux/x86_64
-    image: swaggerapi/swagger-editor
-    container_name: "swagger-editor"
-    ports:
-      - "8001:8080"
-  swagger-ui:
-    platform: linux/x86_64
-    image: swaggerapi/swagger-ui
-    container_name: "swagger-ui"
-    ports:
-      - "8002:8080"
-    volumes:
-      - ./api/swagger/_data_api.yaml:/_data_api.yaml
-    environment:
-      SWAGGER_JSON: /_data_api.yaml
-  redoc:
-    platform: linux/x86_64
-    image: redocly/redoc
-    container_name: "redoc"
-    environment:
-      SPEC_URL: ./openapi/openapi.json # Redocの画面を開いたときに初期値として表示するファイル
-      PORT: 8080 # nginx port(default:80)
-    ports:
-      - '8003:8080'
-    volumes:
-      - ./api/redoc:/usr/share/nginx/html/openapi
+#  swagger-editor:
+#    platform: linux/x86_64
+#    image: swaggerapi/swagger-editor
+#    container_name: "swagger-editor"
+#    ports:
+#      - "8001:8080"
+#  swagger-ui:
+#    platform: linux/x86_64
+#    image: swaggerapi/swagger-ui
+#    container_name: "swagger-ui"
+#    ports:
+#      - "8002:8080"
+#    volumes:
+#      - ./api/swagger/_data_api.yaml:/_data_api.yaml
+#    environment:
+#      SWAGGER_JSON: /_data_api.yaml
+#  redoc:
+#    platform: linux/x86_64
+#    image: redocly/redoc
+#    container_name: "redoc"
+#    environment:
+#      SPEC_URL: ./openapi/openapi.json # Redocの画面を開いたときに初期値として表示するファイル
+#      PORT: 8080 # nginx port(default:80)
+#    ports:
+#      - '8003:8080'
+#    volumes:
+#      - ./api/redoc:/usr/share/nginx/html/openapi
   mysql:
     platform: linux/x86_64
     container_name: ${CONTAINER_BASE_NAME}-db
