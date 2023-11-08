@@ -92,6 +92,8 @@ RUN apk add --no-cache 	imagemagick-perlmagick perl-digest-md5 perl-mozilla-ca p
 # ===========================
 # Httpd Setting
 # ===========================
+RUN echo "ServerName localhost" >> /etc/apache2/httpd.conf
+RUN sed -i '$a\LoadModule cgi_module modules/mod_cgi.so' /etc/apache2/httpd.conf
 RUN sed -i.org '/#AddHandler cgi-script/s/#//' /etc/apache2/httpd.conf
 RUN sed -i    "/^#NameVirtualHost \*:80$/ s/#NameVirtualHost \*:80/NameVirtualHost \*:80/" /etc/apache2/httpd.conf
 RUN sed -i -e "s/KeepAlive Off/KeepAlive On/g" /etc/apache2/httpd.conf
@@ -99,21 +101,33 @@ RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/apache2/httpd.conf
 RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/apache2/httpd.conf
 RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/apache2/httpd.conf
 RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/apache2/httpd.conf
-RUN mkdir -p /var/www/local/html
-RUN mkdir -p /var/www/local/cgi-bin
+RUN echo 'AddHandler cgi-script .cgi' >> /etc/apache2/httpd.conf
+RUN echo '<Directory "/var/www/local/cgi-bin">' >> /etc/apache2/httpd.conf
+RUN echo '    AllowOverride None' >> /etc/apache2/httpd.conf
+RUN echo '    Options +ExecCGI' >> /etc/apache2/httpd.conf
+RUN echo '    Require all granted' >> /etc/apache2/httpd.conf
+RUN echo '</Directory>' >> /etc/apache2/httpd.conf
 
 # ===========================
 # Movable Type Setting
 # ===========================
+RUN mkdir -p /var/www/local/html
+RUN mkdir -p /var/www/local/cgi-bin
 ADD mt-data/${MT_FILE}.zip /var/www/local/cgi-bin/
 RUN unzip /var/www/local/cgi-bin/${MT_FILE}.zip -d '/var/www/local/cgi-bin/'
 RUN mv /var/www/local/cgi-bin/${MT_FILE} /var/www/local/cgi-bin/mt
+RUN chmod o+r /var/www/local/html
 RUN chown -R apache:apache /var/www/local/html
 RUN chown -R apache:apache /var/www/local/cgi-bin/mt
 RUN chmod 777 /var/www/
 RUN chmod 777 /var/www/local
 RUN chmod 777 /var/www/local/html
 RUN chmod 755 /var/www/local/cgi-bin/mt/*.cgi
+RUN echo '<Directory "/var/www/local/cgi-bin">' >> /etc/apache2/httpd.conf
+RUN echo '    AllowOverride All' >> /etc/apache2/httpd.conf
+RUN echo '    Options +ExecCGI' >> /etc/apache2/httpd.conf
+RUN echo '    Require all granted' >> /etc/apache2/httpd.conf
+RUN echo '</Directory>' >> /etc/apache2/httpd.conf
 
 EXPOSE 80
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
