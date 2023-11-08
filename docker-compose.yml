@@ -61,6 +61,6 @@ services:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
       - ./mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
-      - ./docker/httpd/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
+      - ./docker/httpd/virtualhost.conf:/etc/apache2/conf.d/virtualhost.conf
     depends_on:
       - mysql

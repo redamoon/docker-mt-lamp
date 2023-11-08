@@ -11,7 +11,7 @@ RUN apk add apache2
 # ===========================
 # Perl Tools
 # ===========================
-RUN apk add --no-cache perl
+RUN apk add --no-cache perl perl-cgi
 RUN apk add --no-cache perl-app-cpanminus
 
 ## ===========================
@@ -25,12 +25,7 @@ RUN apk add --no-cache perl-app-cpanminus
 # Base Package
 # ===========================
 RUN apk add --no-cache git unzip
-#
-## Remi リポジトリの追加
-## Rocky LinuxでもEPELリポジトリは利用できますが、RemiリポジトリのURLが変更される可能性があるので確認してください。
-#RUN dnf -y install epel-release
-#RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
-#
+
 # ===========================
 # Perl・DB・Dnfリポジトリ・CAPN
 # ===========================
@@ -97,13 +92,13 @@ RUN apk add --no-cache 	imagemagick-perlmagick perl-digest-md5 perl-mozilla-ca p
 # ===========================
 # Httpd Setting
 # ===========================
-#RUN sed -i.org '/#AddHandler cgi-script/s/#//' /etc/httpd/conf/httpd.conf
-#RUN sed -i    "/^#NameVirtualHost \*:80$/ s/#NameVirtualHost \*:80/NameVirtualHost \*:80/" /etc/httpd/conf/httpd.conf
-#RUN sed -i -e "s/KeepAlive Off/KeepAlive On/g" /etc/httpd/conf/httpd.conf
-#RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.conf
-#RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/httpd/conf/httpd.conf
-#RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
-#RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
+RUN sed -i.org '/#AddHandler cgi-script/s/#//' /etc/apache2/httpd.conf
+RUN sed -i    "/^#NameVirtualHost \*:80$/ s/#NameVirtualHost \*:80/NameVirtualHost \*:80/" /etc/apache2/httpd.conf
+RUN sed -i -e "s/KeepAlive Off/KeepAlive On/g" /etc/apache2/httpd.conf
+RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/apache2/httpd.conf
+RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/apache2/httpd.conf
+RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/apache2/httpd.conf
+RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/apache2/httpd.conf
 RUN mkdir -p /var/www/local/html
 RUN mkdir -p /var/www/local/cgi-bin
 
@@ -119,6 +114,6 @@ RUN chmod 777 /var/www/
 RUN chmod 777 /var/www/local
 RUN chmod 777 /var/www/local/html
 RUN chmod 755 /var/www/local/cgi-bin/mt/*.cgi
-#
-#EXPOSE 80
+
+EXPOSE 80
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
