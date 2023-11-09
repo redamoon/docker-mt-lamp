@@ -12,8 +12,6 @@ RUN dnf update -y \
     && dnf install -y git unzip glibc httpd httpd-devel \
     && dnf clean all
 
-#RUN sed -i 's/#ServerName.*/ServerName localhost/' /etc/httpd/conf/httpd.conf
-
 # ===========================
 # Httpd Setting
 # ===========================
