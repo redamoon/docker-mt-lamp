@@ -68,13 +68,13 @@ DUMP_FILE=test
 ### Login SSH Web
 
 ```
-docker exec -it コンテナ名 /bin/bash
+docker exec -it website-apache sh
 ```
 
 ### Login MySQL
 
 ```
-docker exec -it コンテナ名 /bin/bash
+docker exec -it website-db sh
 ```
 
 ## Swagger
