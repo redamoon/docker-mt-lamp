@@ -39,6 +39,45 @@ RUN dnf -y install perl-CGI perl-CPAN "perl(Module::Build)" "perl(DBD::mysql)"
 # ===========================
 RUN dnf -y install "perl(Image::Magick)" "perl(Digest::MD5)" "perl(Mozilla::CA)" "perl(HTML::Entities)"
 
+## ===========================
+## Memcached
+## ===========================
+#RUN dnf -y install memcached "perl(Cache::Memcached)"
+#
+## ===========================
+## SMTP認証関連ライブラリー
+## ===========================
+#RUN dnf -y install "perl(IO::Socket::SSL)" "perl(Net::SSLeay)" "perl(Net::SMTP::SSL)"
+#RUN dnf -y install "perl(Digest::HMAC)"
+#
+#RUN dnf -y install "perl(IO::Socket::SSL)" "perl(Net::SSLeay)" "perl(Net::SMTP::SSL)"
+#RUN cpan Net::SMTP::TLS
+#RUN dnf -y install "perl(Digest::HMAC)"
+#RUN cpan Net::SMTP::TLS
+#
+## ===========================
+## Other：バックアップ
+## ===========================
+#RUN dnf -y install "perl(Archive::Zip)" "perl(Archive::Tar)" "perl(XML::LibXML::SAX)"
+#RUN dnf -y install expat-devel "perl(ExtUtils::MakeMaker)" "perl(Test::Simple)" "perl(XML::Parser)"
+#RUN dnf -y install "perl(Archive::Zip)" "perl(Archive::Tar)" "perl(XML::LibXML::SAX)"
+#RUN cpan XML::SAX::Expat
+#
+## ===========================
+## Other：PSGI
+## ===========================
+#RUN dnf -y install --skip-broken "perl(CGI::Parse::PSGI)" "perl(Plack)"
+#RUN dnf -y install --skip-broken "perl(CGI)"
+#RUN dnf -y install --skip-broken "perl(SOAP::Transport::HTTP)" "perl(XMLRPC::Transport::HTTP)"
+##RUN cpan Devel::StackTrace CGI::Parse::PSGI Plack CGI
+##RUN cpan SOAP::Transport::HTTP XMLRPC::Transport::HTTP #cpanだと時間がかかりすぎてタイムアウトする
+#
+## ===========================
+## Other：ライブラリ
+## ===========================
+#RUN dnf -y install --skip-broken "perl(Authen::SASL)" "perl(Crypt::SSLeay)" "perl(Crypt::DSA)" "perl(Digest::SHA)" "perl(Digest::SHA1)" "perl(HTML::Parser)" "perl(XML::Parser)"
+#RUN dnf -y install --skip-broken "perl(Heap::Fibonacci)" "perl(File::NFSLock)" "perl(IO::String)" "perl(DB_File)" "perl(HTTP::Date)" "perl(Text::CSV_XS)" "perl(MIME::Parser)" "perl(LWP::UserAgent)" "perl(Scalar::Util)" "perl(CGI::Cookie)" "perl(File::Spec)" "perl(parent)"
+
 # ===========================
 # Movable Type Setting
 # ===========================
