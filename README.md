@@ -1,7 +1,7 @@
 # Local development environment
 
 - Docker
-- Rocky Linux 8
+- Rocky Linux 9
 - Apache
 - MySQL 5.7
 - Perl
