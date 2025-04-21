@@ -1,0 +1,84 @@
+# バージョンの指定
+version: "3"
+
+# サービス定義
+services:
+  swagger-editor:
+    platform: linux/x86_64
+    image: swaggerapi/swagger-editor
+    container_name: "swagger-editor"
+    ports:
+      - "8001:8080"
+  swagger-ui:
+    platform: linux/x86_64
+    image: swaggerapi/swagger-ui
+    container_name: "swagger-ui"
+    ports:
+      - "8002:8080"
+    volumes:
+      - ./api/swagger/_data_api.yaml:/_data_api.yaml
+    environment:
+      SWAGGER_JSON: /_data_api.yaml
+  redoc:
+    platform: linux/x86_64
+    image: redocly/redoc
+    container_name: "redoc"
+    environment:
+      SPEC_URL: ./openapi/openapi.json # Redocの画面を開いたときに初期値として表示するファイル
+      PORT: 8080 # nginx port(default:80)
+    ports:
+      - '8003:8080'
+    volumes:
+      - ./api/redoc:/usr/share/nginx/html/openapi
+  mysql:
+    platform: linux/x86_64
+    container_name: ${CONTAINER_BASE_NAME}-db
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: ${MYSQL_ALLOW_EMPTY_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    env_file: .env
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      - ./db-data:/var/lib/mysql
+      - ./sql/${DUMP_FILE}.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
+    ports:
+      - 3306:3306
+  web:
+    platform: linux/x86_64
+    container_name: ${CONTAINER_BASE_NAME}-apache
+    build:
+      context: ./docker
+      args:
+        MT_FILE: "${MT}"
+    ports:
+      - "${WEB_PORT}"
+    volumes:
+      - ./www/html:/var/www/local/html
+      - ./www/logs:/var/www/local/logs
+      - ./mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
+      - ./docker/httpd/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
+    depends_on:
+      - mysql
+  web-psgi:
+    platform: linux/x86_64
+    container_name: ${CONTAINER_BASE_NAME}-psgi
+    build:
+      context: ./docker
+      dockerfile: psgi/Dockerfile.psgi
+      args:
+        MT_FILE: "${MT}"
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./www/html:/var/www/local/html
+      - ./www/logs:/var/www/local/logs
+      - ./mt-settings/mt-config.cgi.psgi:/var/www/local/cgi-bin/mt/mt-config.cgi
+      - ./docker/psgi/start-psgi.sh:/var/www/local/cgi-bin/mt/start-psgi.sh
+    depends_on:
+      - mysql
+    command: ["/bin/bash", "-c", "/var/www/local/cgi-bin/mt/start-psgi.sh"]
