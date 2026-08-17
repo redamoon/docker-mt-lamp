@@ -4,7 +4,7 @@ FROM rockylinux:9
 RUN echo /etc/redhat-release
 ARG MT_FILE="local"
 RUN echo ${MT_FILE}
-MAINTAINER "redamoon"
+LABEL maintainer="redamoon"
 USER root
 RUN dnf -y clean all
 
@@ -28,6 +28,7 @@ RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/h
 # Rocky LinuxでもEPELリポジトリは利用できますが、RemiリポジトリのURLが変更される可能性があるので確認してください。
 RUN dnf -y install epel-release
 RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+RUN dnf config-manager --enable crb
 
 # ===========================
 # Perl・DB・Dnfリポジトリ・CAPN
@@ -37,7 +38,7 @@ RUN dnf -y install perl-CGI perl-CPAN "perl(Module::Build)" "perl(DBD::mysql)"
 # ===========================
 # 必須モジュール
 # ===========================
-RUN dnf -y install "perl(Image::Magick)" "perl(Digest::MD5)" "perl(Mozilla::CA)" "perl(HTML::Entities)"
+RUN dnf -y install "perl(Image::Magick)" "perl(Digest::MD5)" "perl(Mozilla::CA)" "perl(HTML::Entities)" perl-JSON-XS
 
 ## ===========================
 ## Memcached
