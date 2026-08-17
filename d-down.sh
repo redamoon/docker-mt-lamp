@@ -1,2 +1,1 @@
-rm -rf ./db-data
-docker compose down -v
+docker compose down
