@@ -46,7 +46,7 @@ services:
       - ./sql/${DUMP_FILE:-test_data_mysql}.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
     ports:
       - 3306:3306
-  # モード切替: .env の COMPOSE_PROFILES（cgi | psgi-dev）
+  # モード切替: .env の COMPOSE_PROFILES（cgi | psgi-dev | psgi）
   web:
     profiles: ["cgi"]
     platform: linux/x86_64
@@ -85,3 +85,40 @@ services:
     depends_on:
       - mysql
     command: ["/usr/local/bin/start-plackup.sh"]
+  psgi-app:
+    profiles: ["psgi"]
+    platform: linux/x86_64
+    container_name: ${CONTAINER_BASE_NAME}-psgi-app
+    build:
+      context: ./docker
+      dockerfile: psgi/Dockerfile
+      args:
+        MT_FILE: "${MT}"
+    expose:
+      - "5000"
+    environment:
+      STARMAN_WORKERS: ${STARMAN_WORKERS:-2}
+    volumes:
+      - ./www/html:/var/www/local/html
+      - ./www/logs:/var/www/local/logs
+      - ./mt-settings/mt-config.cgi.psgi:/var/www/local/cgi-bin/mt/mt-config.cgi
+      - ./mt-settings/plugins:/var/www/local/mt-dev-plugins
+    depends_on:
+      - mysql
+    command: ["/usr/local/bin/start-starman.sh"]
+  web-psgi:
+    profiles: ["psgi"]
+    platform: linux/x86_64
+    container_name: ${CONTAINER_BASE_NAME}-psgi-proxy
+    build:
+      context: ./docker
+      args:
+        MT_FILE: "${MT}"
+    ports:
+      - "${WEB_PORT}"
+    volumes:
+      - ./www/html:/var/www/local/html
+      - ./www/logs:/var/www/local/logs
+      - ./docker/httpd/virtualhost-psgi.conf:/etc/httpd/conf.d/virtualhost.conf
+    depends_on:
+      - psgi-app
