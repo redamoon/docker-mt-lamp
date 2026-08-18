@@ -66,7 +66,7 @@ RUN dnf -y install "perl(Image::Magick)" "perl(Digest::MD5)" "perl(Mozilla::CA)"
 #RUN cpan XML::SAX::Expat
 #
 ## ===========================
-## Other：PSGI
+## Other：PSGI（CGI イメージでは入れない。docker/psgi/Dockerfile を使う）
 ## ===========================
 #RUN dnf -y install --skip-broken "perl(CGI::Parse::PSGI)" "perl(Plack)"
 #RUN dnf -y install --skip-broken "perl(CGI)"
