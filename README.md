@@ -44,14 +44,27 @@ Movable Type を配置して、docker compose で起動します。
 
 ### Shutdown
 
+コンテナを停止します。**MySQL データ (`./db-data`) と公開ファイル (`./www/html`) は残ります。**
+
 ```bash
 ./d-down.sh
 ```
 
+再起動は `./d-up.sh` です。イメージの作り直しは不要です。
+
+### Reset DB
+
+MySQL データだけを消して作り直すときは、明示的に次を実行します。日常の停止には使いません。
+
+```bash
+./d-reset-db.sh --yes
+```
+
+`./db-data` を削除したあとコンテナを起動し直します。datadir が空のため、`.env` の `DUMP_FILE` で指定した `sql/<DUMP_FILE>.sql` が初期投入されます。`www/html` は削除しません。
+
 ### Dump
 
-ShutdownでDBは破棄されます。  
-必要なデータはシャットダウンの前にDBのDumpを取ります。
+任意のタイミングでバックアップを取れます。停止の前に必須ではありません。
 
 以下のコマンドで `sql/test.sql` が生成されます。
 
@@ -59,11 +72,29 @@ ShutdownでDBは破棄されます。
 ./dump.sh test
 ```
 
-再度起動する時は、 `env` ファイルに取り出した Dumpファイルを指定することで起動できます。
+空の DB から dump を初期投入して起動する場合は、`.env` にファイル名（拡張子なし）を指定します。
 
 ```dotenv
 DUMP_FILE=test
 ```
+
+`DUMP_FILE` を空にすると `sql/.sql` を参照してしまいます。未設定時は `test_data_mysql` が使われます。
+
+## プラグイン開発
+
+開発用プラグインは **DocumentRoot (`www/html`) ではなく** 次の場所に置きます。
+
+```
+mt-settings/plugins/<PluginName>/
+```
+
+例: `mt-settings/plugins/MTMCP/config.yaml`
+
+このディレクトリはコンテナの `/var/www/local/mt-dev-plugins` に bind mount され、`mt-config.cgi` の `PluginPath` から読み込まれます。zip 同梱のコアプラグイン (`/var/www/local/cgi-bin/mt/plugins`) は上書きしません。ホスト側が空ディレクトリでも、同名のコアプラグインは消えません。
+
+ファイルを差し替えたあとは **再ビルド不要** です。CGI のため次のリクエストで新しいコードが使われます。MT 管理画面でプラグイン一覧が古い場合は、画面の再読み込みか `./d-up.sh` によるコンテナ再作成で足りることが多いです。
+
+再ビルド (`./d-build.sh`) が必要なのは、MT 本体 zip の差し替えや `docker/Dockerfile` の変更時です。
 
 ### Login SSH Web
 
