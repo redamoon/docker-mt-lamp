@@ -13,6 +13,7 @@
 |----------------|-----------------------------------|
 | Movable Type（cgi・デフォルト） | http://localhost:11000/cgi-bin/mt |
 | Movable Type（psgi-dev） | http://localhost:5000/            |
+| Movable Type（psgi・骨格） | http://localhost:11000/cgi-bin/mt |
 | Swagger Editor | http://localhost:8001             |
 | Swagger UI     | http://localhost:8002             |
 | Redocly Redoc  | http://localhost:8003             |
@@ -21,7 +22,7 @@
 
 1. .env.sampleを.envにリネーム
 2. .env環境変数を設定（既存の `.env` には `COMPOSE_PROFILES=cgi` を追加する）
-3. mt-settings/mt-config.cgiで設定したDB情報を入力（psgi-dev は `mt-settings/mt-config.cgi.psgi-dev` も同様）
+3. mt-settings/mt-config.cgiで設定したDB情報を入力（PSGI モードは版ごとの設定ファイルも同様）
 4. Movable Type本体のディレクトリ名をMT-7.0にしてzipにする
 5. docker/mt-data 配下にMovable Typeをzipで配置
 
@@ -53,17 +54,19 @@ Compose profile で切り替えます。nginx リバースプロキシは対象�
 |---------|------|----------|
 | `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:11000/cgi-bin/mt |
 | `psgi-dev` | plackup 単体 | http://localhost:5000/ |
+| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:11000/cgi-bin/mt |
 
 MySQL（`./db-data`）と公開ディレクトリ（`./www/html`）はモード間で共有します。`CGIPath` / `StaticWebPath` だけ版ごとに分けています。
 
 - cgi: `mt-settings/mt-config.cgi`
 - psgi-dev: `mt-settings/mt-config.cgi.psgi-dev`
+- psgi: `mt-settings/mt-config.cgi.psgi`
 
 切替例（ポートが重なるので、先に停止してから profile を変える）:
 
 ```bash
 ./d-down.sh
-# .env の COMPOSE_PROFILES を cgi / psgi-dev のいずれかに変更
+# .env の COMPOSE_PROFILES を cgi / psgi-dev / psgi のいずれかに変更
 ./d-up.sh
 ```
 
@@ -80,11 +83,15 @@ psgi-dev の初回は PSGI イメージのビルドが必要です。
 COMPOSE_PROFILES=psgi-dev ./d-build.sh
 ```
 
-PSGI はプロセス常駐です。プラグインを差し替えたあと、plackup のファイル監視でリロードを試みます。効かない場合はコンテナの再起動が必要です。
+PSGI はプロセス常駐です。プラグインを差し替えたあと、`psgi-dev` は plackup のファイル監視でリロードを試みます。効かない場合や `psgi`（Starman）ではコンテナの再起動が必要です。
 
 ```bash
 docker compose restart web-psgi-dev
+# または
+docker compose restart psgi-app
 ```
+
+`psgi` は設定と起動コマンドの骨格です。ブラウザ到達までの確認は `psgi-dev` を先に使ってください。
 
 Swagger / Redoc はどのモードでも同じポートで起動します。
 
@@ -138,7 +145,7 @@ mt-settings/plugins/<PluginName>/
 
 このディレクトリはコンテナの `/var/www/local/mt-dev-plugins` に bind mount され、`mt-config.cgi` の `PluginPath` から読み込まれます。zip 同梱のコアプラグイン (`/var/www/local/cgi-bin/mt/plugins`) は上書きしません。ホスト側が空ディレクトリでも、同名のコアプラグインは消えません。
 
-ファイルを差し替えたあとは **再ビルド不要** です。CGI モードでは次のリクエストで新しいコードが使われます。PSGI モード（`psgi-dev`）は常駐のため、上記のリロード／再起動が必要です。MT 管理画面でプラグイン一覧が古い場合は、画面の再読み込みか `./d-up.sh` によるコンテナ再作成で足りることが多いです。
+ファイルを差し替えたあとは **再ビルド不要** です。CGI モードでは次のリクエストで新しいコードが使われます。PSGI モードは常駐のため、上記のリロード／再起動が必要です。MT 管理画面でプラグイン一覧が古い場合は、画面の再読み込みか `./d-up.sh` によるコンテナ再作成で足りることが多いです。
 
 再ビルド (`./d-build.sh`) が必要なのは、MT 本体 zip の差し替えや `docker/Dockerfile` の変更時です。
 
