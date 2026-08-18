@@ -28,6 +28,7 @@ RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/h
 # Rocky LinuxでもEPELリポジトリは利用できますが、RemiリポジトリのURLが変更される可能性があるので確認してください。
 RUN dnf -y install epel-release
 RUN dnf -y install https://rpms.remirepo.net/enterprise/remi-release-9.rpm
+RUN dnf -y install dnf-plugins-core
 RUN dnf config-manager --enable crb
 
 # ===========================
