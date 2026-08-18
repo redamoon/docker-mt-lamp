@@ -46,7 +46,9 @@ services:
       - ./sql/${DUMP_FILE:-test_data_mysql}.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
     ports:
       - 3306:3306
+  # モード切替: .env の COMPOSE_PROFILES（cgi | psgi-dev）
   web:
+    profiles: ["cgi"]
     platform: linux/x86_64
     container_name: ${CONTAINER_BASE_NAME}-apache
     build:
@@ -64,3 +66,22 @@ services:
       - ./mt-settings/plugins:/var/www/local/mt-dev-plugins
     depends_on:
       - mysql
+  web-psgi-dev:
+    profiles: ["psgi-dev"]
+    platform: linux/x86_64
+    container_name: ${CONTAINER_BASE_NAME}-psgi-dev
+    build:
+      context: ./docker
+      dockerfile: psgi/Dockerfile
+      args:
+        MT_FILE: "${MT}"
+    ports:
+      - "${APP_PORT:-5000}:5000"
+    volumes:
+      - ./www/html:/var/www/local/html
+      - ./www/logs:/var/www/local/logs
+      - ./mt-settings/mt-config.cgi.psgi-dev:/var/www/local/cgi-bin/mt/mt-config.cgi
+      - ./mt-settings/plugins:/var/www/local/mt-dev-plugins
+    depends_on:
+      - mysql
+    command: ["/usr/local/bin/start-plackup.sh"]
