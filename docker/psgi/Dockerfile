@@ -20,9 +20,10 @@ RUN dnf -y install "perl(Image::Magick)" "perl(Digest::MD5)" "perl(Mozilla::CA)"
 
 # PSGI: dnf を優先。無いパッケージだけ cpanm（ビルドが長くなりやすいので成功時は使わない）
 # Starman も入れておき、後続の Apache+Starman モードでイメージを作り直さない
+# CGI::Compile / CGI::Emulate::PSGI は Plack::App::WrapCGI と mt.psgi が要求する
 RUN dnf -y install perl-App-cpanminus gcc make perl-devel
-RUN dnf -y install "perl(Plack)" "perl(CGI::Parse::PSGI)" "perl(CGI::PSGI)" "perl(Starman)" \
-    || cpanm -n --notest Plack CGI::PSGI CGI::Parse::PSGI Starman
+RUN dnf -y install "perl(Plack)" "perl(CGI::Parse::PSGI)" "perl(CGI::PSGI)" "perl(CGI::Compile)" "perl(CGI::Emulate::PSGI)" "perl(Starman)" \
+    || cpanm -n --notest Plack CGI::PSGI CGI::Parse::PSGI CGI::Compile CGI::Emulate::PSGI Starman
 
 RUN mkdir -p /var/www/local/html /var/www/local/cgi-bin /var/www/local/logs
 ADD mt-data/${MT_FILE}.zip /var/www/local/cgi-bin/
