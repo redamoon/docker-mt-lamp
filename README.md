@@ -11,9 +11,9 @@
 
 | 起動アプリケーション     | URL                               |
 |----------------|-----------------------------------|
-| Movable Type（cgi・デフォルト） | http://localhost:11000/cgi-bin/mt |
+| Movable Type（cgi・デフォルト） | http://localhost:10000/cgi-bin/mt |
 | Movable Type（psgi-dev） | http://localhost:5000/            |
-| Movable Type（psgi・骨格） | http://localhost:11000/cgi-bin/mt |
+| Movable Type（psgi・骨格） | http://localhost:10000/cgi-bin/mt |
 | Swagger Editor | http://localhost:8001             |
 | Swagger UI     | http://localhost:8002             |
 | Redocly Redoc  | http://localhost:8003             |
@@ -52,9 +52,9 @@ Compose profile で切り替えます。nginx リバースプロキシは対象�
 
 | profile | 内容 | 管理画面 |
 |---------|------|----------|
-| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:11000/cgi-bin/mt |
+| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt |
 | `psgi-dev` | plackup 単体 | http://localhost:5000/ |
-| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:11000/cgi-bin/mt |
+| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt |
 
 MySQL（`./db-data`）と公開ディレクトリ（`./www/html`）はモード間で共有します。`CGIPath` / `StaticWebPath` だけ版ごとに分けています。
 
@@ -166,7 +166,7 @@ docker exec -it コンテナ名 /bin/bash
 ![Swagger](./docs_assets/20221204073039.png)
 
 Dockerを起動するとData API用のSwagger UIが表示します。
-localhost:11000のMTに入ってるデータを確認する場合は、 `mt-config.cgi` に `DataAPICORSAllowOrigin` を設定します。
+localhost:10000のMTに入ってるデータを確認する場合は、 `mt-config.cgi` に `DataAPICORSAllowOrigin` を設定します。
 
 ```cgi
 DataAPICORSAllowOrigin http://localhost:8002/
