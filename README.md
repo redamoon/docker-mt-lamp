@@ -67,13 +67,6 @@ Compose profile で切り替えます。[#23](https://github.com/redamoon/docker
 | `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi |
 | `psgi-nginx` | nginx リバースプロキシ + Starman（静的は nginx。#23） | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi |
 
-| profile | 内容 | 管理画面 |
-|---------|------|----------|
-| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi |
-| `psgi-dev` | plackup（管理画面 + 公開 HTML） | http://localhost:5001/mt.cgi |
-| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi |
-| `psgi-nginx` | nginx リバースプロキシ + Starman（静的は nginx。#23） | http://localhost:10000/cgi-bin/mt/mt.cgi |
-
 `cgi` / `psgi-dev` / `psgi` はそのまま使えます。`psgi` と `psgi-nginx` はどちらも `WEB_PORT` を使うため **同時起動しません**。切替は先に `./d-down.sh` してから `COMPOSE_PROFILES` を変えます。
 
 MySQL（`./db-data`）と公開ディレクトリ（`./www/html`）はモード間で共有します。`CGIPath` / `StaticWebPath` だけ版ごとに分けています。
