@@ -33,8 +33,9 @@ RUN unzip /var/www/local/cgi-bin/${MT_FILE}.zip -d '/var/www/local/cgi-bin/' \
 
 COPY psgi/start-plackup.sh /usr/local/bin/start-plackup.sh
 COPY psgi/start-starman.sh /usr/local/bin/start-starman.sh
+COPY psgi/mt-dev.psgi /var/www/local/cgi-bin/mt/mt-dev.psgi
 RUN chmod +x /usr/local/bin/start-plackup.sh /usr/local/bin/start-starman.sh
 
 WORKDIR /var/www/local/cgi-bin/mt
-EXPOSE 5000
+EXPOSE 5001
 CMD ["/usr/local/bin/start-plackup.sh"]
