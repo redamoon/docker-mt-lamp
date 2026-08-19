@@ -4,6 +4,8 @@
 !/www/html/.keep
 # !/www/html/.htaccess
 /db-data/
+/docker/nginx/certs/*
+!/docker/nginx/certs/.gitkeep
 /mt-settings/plugins/*
 !/mt-settings/plugins/.keep
 sql/.sql

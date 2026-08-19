@@ -3,6 +3,7 @@
 - Docker
 - Rocky Linux 9
 - Apache
+- Nginx（`psgi-nginx` のみ。Starman の手前）
 - MySQL 5.7
 - Perl
 - Movable Type
@@ -12,10 +13,13 @@
 | 起動アプリケーション     | URL                                          |
 |----------------|----------------------------------------------|
 | Movable Type（cgi・デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
-| 公開サイト（cgi / psgi） | http://localhost:10000/                      |
+| 公開サイト（cgi / psgi / psgi-nginx） | http://localhost:10000/                      |
 | Movable Type（psgi-dev） | http://localhost:5001/mt.cgi                 |
 | 公開サイト（psgi-dev） | http://localhost:5001/                       |
 | Movable Type（psgi・骨格） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
+| Movable Type（psgi-nginx） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
+| Movable Type（psgi-nginx・HTTPS） | https://localhost:10443/cgi-bin/mt/mt.cgi    |
+| 公開サイト（psgi-nginx・HTTPS） | https://localhost:10443/                     |
 | Swagger Editor | http://localhost:8001                        |
 | Swagger UI     | http://localhost:8002                        |
 | Redocly Redoc  | http://localhost:8003                        |
@@ -50,19 +54,25 @@ Movable Type を配置して、docker compose で起動します。
 
 ### 実行モード（CGI / PSGI 切替）
 
-Compose profile で切り替えます。nginx リバースプロキシは対象外です（#23）。
+Compose profile で切り替えます。[#23](https://github.com/redamoon/docker-mt-lamp/issues/23) の `psgi-nginx` は **PSGI（Starman）の手前だけ** nginx です。CGI 全体を nginx にする話ではありません。
 
-| profile | 内容 | 管理画面 |
-|---------|------|----------|
-| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi |
-| `psgi-dev` | plackup（管理画面 + 公開 HTML） | http://localhost:5001/mt.cgi |
-| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi |
+ホストの HTTP ポートは `.env` の `WEB_PORT`（sample は `10000:80`）です。HTTPS は `HTTPS_PORT`（sample は `10443:443`）で、いまは **`psgi-nginx` のみ**です。`psgi-dev`（plackup）はアプリサーバー直公開のため HTTP のみです。
+
+| profile | 内容 | 管理画面（HTTP） | 管理画面（HTTPS） |
+|---------|------|----------|----------|
+| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi | （対象外） |
+| `psgi-dev` | plackup（管理画面 + 公開 HTML） | http://localhost:5001/mt.cgi | （対象外） |
+| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi | （対象外） |
+| `psgi-nginx` | nginx リバースプロキシ + Starman（静的は nginx。#23） | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi |
+
+`cgi` / `psgi-dev` / `psgi` はそのまま使えます。`psgi` と `psgi-nginx` はどちらも `WEB_PORT` を使うため **同時起動しません**。切替は先に `./d-down.sh` してから `COMPOSE_PROFILES` を変えます。
 
 MySQL（`./db-data`）と公開ディレクトリ（`./www/html`）はモード間で共有します。`CGIPath` / `StaticWebPath` だけ版ごとに分けています。
 
 - cgi: `mt-settings/mt-config.cgi`
 - psgi-dev: `mt-settings/mt-config.cgi.psgi-dev`
 - psgi: `mt-settings/mt-config.cgi.psgi`
+- psgi-nginx: `mt-settings/mt-config.cgi.psgi-nginx`
 
 ### 管理画面 URL
 
@@ -72,25 +82,39 @@ macOS の AirPlay レシーバーがホストの 5000 番を使うため、`psgi
 
 生成済み HTML の CSS やリンクは、MT のサイト URL（データベース側）に従います。cgi で出したサイトは `http://localhost:10000/` を指していることが多いです。`psgi-dev` で見た目まで確認するなら、管理画面のサイト URL を `http://localhost:5001/` にして再構築してください。テーマの CSS / 画像（`/mt-static/support/theme_static/...`）は、コンテナ起動時に `themes/<id>/static` から同期します。
 
-| 画面 | cgi / psgi | psgi-dev |
-|------|------------|----------|
-| 公開サイト | http://localhost:10000/ | http://localhost:5001/ |
-| 管理画面 | http://localhost:10000/cgi-bin/mt/mt.cgi | http://localhost:5001/mt.cgi |
-| インストールウィザード | http://localhost:10000/cgi-bin/mt/mt-wizard.cgi | http://localhost:5001/mt-wizard.cgi |
-| 環境チェック | http://localhost:10000/cgi-bin/mt/mt-check.cgi | http://localhost:5001/mt-check.cgi |
-| アップグレード | http://localhost:10000/cgi-bin/mt/mt-upgrade.cgi | http://localhost:5001/mt-upgrade.cgi |
-| Data API | http://localhost:10000/cgi-bin/mt/mt-data-api.cgi | http://localhost:5001/mt-data-api.cgi |
-| サイト内検索 | http://localhost:10000/cgi-bin/mt/mt-search.cgi | http://localhost:5001/mt-search.cgi |
-| コンテンツデータ検索 | http://localhost:10000/cgi-bin/mt/mt-cdsearch.cgi | http://localhost:5001/mt-cdsearch.cgi |
-| コメント | http://localhost:10000/cgi-bin/mt/mt-comments.cgi | http://localhost:5001/mt-comments.cgi |
-| 共有プレビュー | http://localhost:10000/cgi-bin/mt/mt-shared-preview.cgi | http://localhost:5001/mt-shared-preview.cgi |
-| 静的ファイル（mt-static） | http://localhost:10000/cgi-bin/mt/mt-static/ | http://localhost:5001/mt-static/ |
+| 画面 | HTTP（cgi / psgi / psgi-nginx） | HTTPS（psgi-nginx） | psgi-dev |
+|------|------------|----------|----------|
+| 公開サイト | http://localhost:10000/ | https://localhost:10443/ | http://localhost:5001/ |
+| 管理画面 | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi | http://localhost:5001/mt.cgi |
+| インストールウィザード | http://localhost:10000/cgi-bin/mt/mt-wizard.cgi | https://localhost:10443/cgi-bin/mt/mt-wizard.cgi | http://localhost:5001/mt-wizard.cgi |
+| 環境チェック | http://localhost:10000/cgi-bin/mt/mt-check.cgi | https://localhost:10443/cgi-bin/mt/mt-check.cgi | http://localhost:5001/mt-check.cgi |
+| アップグレード | http://localhost:10000/cgi-bin/mt/mt-upgrade.cgi | https://localhost:10443/cgi-bin/mt/mt-upgrade.cgi | http://localhost:5001/mt-upgrade.cgi |
+| Data API | http://localhost:10000/cgi-bin/mt/mt-data-api.cgi | https://localhost:10443/cgi-bin/mt/mt-data-api.cgi | http://localhost:5001/mt-data-api.cgi |
+| サイト内検索 | http://localhost:10000/cgi-bin/mt/mt-search.cgi | https://localhost:10443/cgi-bin/mt/mt-search.cgi | http://localhost:5001/mt-search.cgi |
+| コンテンツデータ検索 | http://localhost:10000/cgi-bin/mt/mt-cdsearch.cgi | https://localhost:10443/cgi-bin/mt/mt-cdsearch.cgi | http://localhost:5001/mt-cdsearch.cgi |
+| コメント | http://localhost:10000/cgi-bin/mt/mt-comments.cgi | https://localhost:10443/cgi-bin/mt/mt-comments.cgi | http://localhost:5001/mt-comments.cgi |
+| 共有プレビュー | http://localhost:10000/cgi-bin/mt/mt-shared-preview.cgi | https://localhost:10443/cgi-bin/mt/mt-shared-preview.cgi | http://localhost:5001/mt-shared-preview.cgi |
+| 静的ファイル（mt-static） | http://localhost:10000/cgi-bin/mt/mt-static/ | https://localhost:10443/cgi-bin/mt/mt-static/ | http://localhost:5001/mt-static/ |
+
+`psgi-nginx` は HTTP と HTTPS の両方で開けます（HTTP を HTTPS へ強制リダイレクトしません）。HTTPS は `.env` の `HTTPS_PORT`（sample は `10443:443`）です。自己署名のためブラウザの警告が出ます。
+
+- cgi の `CGIPath` は相対 `/cgi-bin/mt/` です。
+- psgi の `mt-config.cgi.psgi` は HTTP の `http://localhost:10000/cgi-bin/mt/` です。
+- `psgi-nginx` は公開 HTML（`www/html`）と `mt-static` を nginx が返し、`/cgi-bin/mt/` だけ Starman へ渡します。HTTPS で管理画面の CSS を揃えるときは `mt-config.cgi.psgi-nginx` を `https://localhost:10443/cgi-bin/mt/` に合わせてください。
+
+ローカル証明書は **`psgi-nginx` 用**です（リポジトリには入れません）。未生成のままだと nginx は起動しません。**先に次を実行**してください。
+
+```bash
+./docker/nginx/gen-local-cert.sh
+```
+
+`docker/nginx/certs/localhost.crt` と `localhost.key` が作られます。秘密鍵は gitignore 済みです。
 
 切替例（ポートが重なるので、先に停止してから profile を変える）:
 
 ```bash
 ./d-down.sh
-# .env の COMPOSE_PROFILES を cgi / psgi-dev / psgi のいずれかに変更
+# .env の COMPOSE_PROFILES を cgi / psgi-dev / psgi / psgi-nginx のいずれかに変更
 ./d-up.sh
 ```
 
@@ -101,21 +125,25 @@ macOS の AirPlay レシーバーがホストの 5000 番を使うため、`psgi
 COMPOSE_PROFILES=psgi-dev ./d-up.sh
 ```
 
-psgi-dev の初回は PSGI イメージのビルドが必要です。
+psgi-dev / psgi / psgi-nginx の初回は PSGI イメージのビルドが必要です。
 
 ```bash
 COMPOSE_PROFILES=psgi-dev ./d-build.sh
+# または
+COMPOSE_PROFILES=psgi-nginx ./d-build.sh
 ```
 
-PSGI はプロセス常駐です。プラグインを差し替えたあと、`psgi-dev` は plackup のファイル監視でリロードを試みます。効かない場合や `psgi`（Starman）ではコンテナの再起動が必要です。
+PSGI はプロセス常駐です。プラグインを差し替えたあと、`psgi-dev` は plackup のファイル監視でリロードを試みます。効かない場合や `psgi` / `psgi-nginx`（Starman）ではコンテナの再起動が必要です。
 
 ```bash
 docker compose restart web-psgi-dev
 # または
 docker compose restart psgi-app
+# psgi-nginx の場合
+docker compose restart psgi-app-nginx
 ```
 
-`psgi` は設定と起動コマンドの骨格です。ブラウザ到達までの確認は `psgi-dev` を先に使ってください。
+`psgi` は設定と起動コマンドの骨格です。ブラウザ到達までの確認は `psgi-dev` を先に使ってください。`psgi-nginx` も同様に Starman 常駐です。
 
 Swagger / Redoc はどのモードでも同じポートで起動します。
 
