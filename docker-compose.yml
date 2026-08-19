@@ -46,7 +46,7 @@ services:
       - ./sql/${DUMP_FILE:-test_data_mysql}.sql:/docker-entrypoint-initdb.d/test_data_mysql.sql
     ports:
       - 3306:3306
-  # モード切替: .env の COMPOSE_PROFILES（cgi | psgi-dev | psgi）
+  # モード切替: .env の COMPOSE_PROFILES（cgi | psgi-dev | psgi | psgi-nginx）
   web:
     profiles: ["cgi"]
     platform: linux/x86_64
@@ -122,3 +122,55 @@ services:
       - ./docker/httpd/virtualhost-psgi.conf:/etc/httpd/conf.d/virtualhost.conf
     depends_on:
       - psgi-app
+  # nginx → Starman（#23）。psgi（Apache プロキシ）とは共存。同じ WEB_PORT のため同時起動しない
+  psgi-app-nginx:
+    profiles: ["psgi-nginx"]
+    platform: linux/x86_64
+    container_name: ${CONTAINER_BASE_NAME}-psgi-app-nginx
+    build:
+      context: ./docker
+      dockerfile: psgi/Dockerfile
+      args:
+        MT_FILE: "${MT}"
+    expose:
+      - "5001"
+    environment:
+      STARMAN_WORKERS: ${STARMAN_WORKERS:-2}
+      SHARE_MT_STATIC: /shared/mt-static
+    volumes:
+      - ./www/html:/var/www/local/html
+      - ./www/logs:/var/www/local/logs
+      - ./mt-settings/mt-config.cgi.psgi-nginx:/var/www/local/cgi-bin/mt/mt-config.cgi
+      - ./mt-settings/plugins:/var/www/local/mt-dev-plugins
+      - ./docker/psgi/start-starman.sh:/usr/local/bin/start-starman.sh
+      - psgi-nginx-mt-static:/shared/mt-static
+    depends_on:
+      - mysql
+    command: ["/usr/local/bin/start-starman.sh"]
+  web-psgi-nginx:
+    profiles: ["psgi-nginx"]
+    image: nginx:1.27-alpine
+    container_name: ${CONTAINER_BASE_NAME}-psgi-nginx
+    ports:
+      - "${WEB_PORT}"
+      - "${HTTPS_PORT:-10443:443}"
+    volumes:
+      - ./www/html:/var/www/local/html:ro
+      - ./www/logs:/var/www/local/logs
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/certs:/etc/nginx/certs:ro
+      - psgi-nginx-mt-static:/var/www/local/cgi-bin/mt/mt-static:ro
+    depends_on:
+      - psgi-app-nginx
+    command:
+      - /bin/sh
+      - -c
+      - |
+        if [ ! -f /etc/nginx/certs/localhost.crt ] || [ ! -f /etc/nginx/certs/localhost.key ]; then
+          echo "localhost 用の証明書がありません。ホストで ./docker/nginx/gen-local-cert.sh を実行してください。" >&2
+          exit 1
+        fi
+        exec nginx -g 'daemon off;'
+
+volumes:
+  psgi-nginx-mt-static:
