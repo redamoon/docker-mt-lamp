@@ -9,7 +9,7 @@ USER root
 RUN dnf -y clean all
 
 RUN dnf update -y \
-    && dnf install -y git unzip glibc httpd httpd-devel \
+    && dnf install -y git unzip glibc httpd httpd-devel mod_ssl \
     && dnf clean all
 
 # ===========================
@@ -23,6 +23,8 @@ RUN sed -i -e "s/AllowOverride None/AllowOverride All/g" /etc/httpd/conf/httpd.c
 RUN sed -i -e "s/DirectoryIndex index.html index.html.var/DirectoryIndex index.html index.php/g" /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule include_module modules/mod_include.so' /etc/httpd/conf/httpd.conf
 RUN sed -i '$a\LoadModule filter_module modules/mod_filter.so' /etc/httpd/conf/httpd.conf
+# 配布 ssl.conf は *:443 のデフォルト vhost を持つので無効化。Listen 443 は virtualhost 側。
+RUN if [ -f /etc/httpd/conf.d/ssl.conf ]; then mv /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.disabled; fi
 
 # Remi リポジトリの追加
 # Rocky LinuxでもEPELリポジトリは利用できますが、RemiリポジトリのURLが変更される可能性があるので確認してください。
@@ -99,5 +101,5 @@ COPY sync-theme-static.sh /usr/local/bin/sync-theme-static.sh
 COPY httpd/start-httpd.sh /usr/local/bin/start-httpd.sh
 RUN chmod +x /usr/local/bin/sync-theme-static.sh /usr/local/bin/start-httpd.sh
 
-EXPOSE 80
+EXPOSE 80 443
 CMD ["/usr/local/bin/start-httpd.sh"]
