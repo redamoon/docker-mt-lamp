@@ -95,5 +95,9 @@ RUN chmod 777 /var/www/local
 RUN chmod 777 /var/www/local/html
 RUN chmod 755 /var/www/local/cgi-bin/mt/*.cgi
 
+COPY sync-theme-static.sh /usr/local/bin/sync-theme-static.sh
+COPY httpd/start-httpd.sh /usr/local/bin/start-httpd.sh
+RUN chmod +x /usr/local/bin/sync-theme-static.sh /usr/local/bin/start-httpd.sh
+
 EXPOSE 80
-CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
+CMD ["/usr/local/bin/start-httpd.sh"]
