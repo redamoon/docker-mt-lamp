@@ -9,14 +9,14 @@
 - Swagger
 - Redocly
 
-| 起動アプリケーション     | URL                               |
-|----------------|-----------------------------------|
-| Movable Type（cgi・デフォルト） | http://localhost:10000/cgi-bin/mt |
-| Movable Type（psgi-dev） | http://localhost:5000/            |
-| Movable Type（psgi・骨格） | http://localhost:10000/cgi-bin/mt |
-| Swagger Editor | http://localhost:8001             |
-| Swagger UI     | http://localhost:8002             |
-| Redocly Redoc  | http://localhost:8003             |
+| 起動アプリケーション     | URL                                          |
+|----------------|----------------------------------------------|
+| Movable Type（cgi・デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
+| Movable Type（psgi-dev） | http://localhost:5001/mt.cgi                 |
+| Movable Type（psgi・骨格） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
+| Swagger Editor | http://localhost:8001                        |
+| Swagger UI     | http://localhost:8002                        |
+| Redocly Redoc  | http://localhost:8003                        |
 
 ## Setup
 
@@ -52,15 +52,34 @@ Compose profile で切り替えます。nginx リバースプロキシは対象�
 
 | profile | 内容 | 管理画面 |
 |---------|------|----------|
-| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt |
-| `psgi-dev` | plackup 単体 | http://localhost:5000/ |
-| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt |
+| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi |
+| `psgi-dev` | plackup 単体 | http://localhost:5001/mt.cgi |
+| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi |
 
 MySQL（`./db-data`）と公開ディレクトリ（`./www/html`）はモード間で共有します。`CGIPath` / `StaticWebPath` だけ版ごとに分けています。
 
 - cgi: `mt-settings/mt-config.cgi`
 - psgi-dev: `mt-settings/mt-config.cgi.psgi-dev`
 - psgi: `mt-settings/mt-config.cgi.psgi`
+
+### 管理画面 URL
+
+Movable Type は CGI スクリプト名単位で公開します。`psgi-dev` の `CGIPath` は `http://localhost:5001/` なので、管理画面は **`/mt.cgi`** です。`http://localhost:5001/` や `/mt` を開くと `Not Found` になります。
+
+macOS の AirPlay レシーバーがホストの 5000 番を使うため、`psgi-dev` の公開ポートは `.env` の `APP_PORT`（デフォルト `5001`）です。
+
+| 画面 | cgi / psgi | psgi-dev |
+|------|------------|----------|
+| 管理画面 | http://localhost:10000/cgi-bin/mt/mt.cgi | http://localhost:5001/mt.cgi |
+| インストールウィザード | http://localhost:10000/cgi-bin/mt/mt-wizard.cgi | http://localhost:5001/mt-wizard.cgi |
+| 環境チェック | http://localhost:10000/cgi-bin/mt/mt-check.cgi | http://localhost:5001/mt-check.cgi |
+| アップグレード | http://localhost:10000/cgi-bin/mt/mt-upgrade.cgi | http://localhost:5001/mt-upgrade.cgi |
+| Data API | http://localhost:10000/cgi-bin/mt/mt-data-api.cgi | http://localhost:5001/mt-data-api.cgi |
+| サイト内検索 | http://localhost:10000/cgi-bin/mt/mt-search.cgi | http://localhost:5001/mt-search.cgi |
+| コンテンツデータ検索 | http://localhost:10000/cgi-bin/mt/mt-cdsearch.cgi | http://localhost:5001/mt-cdsearch.cgi |
+| コメント | http://localhost:10000/cgi-bin/mt/mt-comments.cgi | http://localhost:5001/mt-comments.cgi |
+| 共有プレビュー | http://localhost:10000/cgi-bin/mt/mt-shared-preview.cgi | http://localhost:5001/mt-shared-preview.cgi |
+| 静的ファイル（mt-static） | http://localhost:10000/cgi-bin/mt/mt-static/ | http://localhost:5001/mt-static/ |
 
 切替例（ポートが重なるので、先に停止してから profile を変える）:
 

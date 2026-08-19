@@ -10,7 +10,7 @@ exec plackup \
   -I lib \
   -I extlib \
   -s HTTP::Server::PSGI \
-  -p 5000 \
+  -p 5001 \
   -r \
   -R /var/www/local/mt-dev-plugins \
   mt.psgi
