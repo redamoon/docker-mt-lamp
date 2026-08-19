@@ -1,4 +1,5 @@
 # The CGIPath is the URL to your Movable Type directory
+# 相対パスなので HTTP / HTTPS の Host に追従しやすい
 CGIPath /cgi-bin/mt/
 
 # simply remove it or comment out the line by prepending a "#".
