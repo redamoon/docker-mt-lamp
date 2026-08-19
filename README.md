@@ -13,13 +13,15 @@
 | 起動アプリケーション     | URL                                          |
 |----------------|----------------------------------------------|
 | Movable Type（cgi・デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
+| Movable Type（cgi・HTTPS） | https://localhost:10443/cgi-bin/mt/mt.cgi    |
 | 公開サイト（cgi / psgi / psgi-nginx） | http://localhost:10000/                      |
+| 公開サイト（cgi / psgi / psgi-nginx・HTTPS） | https://localhost:10443/                     |
 | Movable Type（psgi-dev） | http://localhost:5001/mt.cgi                 |
 | 公開サイト（psgi-dev） | http://localhost:5001/                       |
 | Movable Type（psgi・骨格） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
+| Movable Type（psgi・HTTPS） | https://localhost:10443/cgi-bin/mt/mt.cgi    |
 | Movable Type（psgi-nginx） | http://localhost:10000/cgi-bin/mt/mt.cgi     |
 | Movable Type（psgi-nginx・HTTPS） | https://localhost:10443/cgi-bin/mt/mt.cgi    |
-| 公開サイト（psgi-nginx・HTTPS） | https://localhost:10443/                     |
 | Swagger Editor | http://localhost:8001                        |
 | Swagger UI     | http://localhost:8002                        |
 | Redocly Redoc  | http://localhost:8003                        |
@@ -56,14 +58,21 @@ Movable Type を配置して、docker compose で起動します。
 
 Compose profile で切り替えます。[#23](https://github.com/redamoon/docker-mt-lamp/issues/23) の `psgi-nginx` は **PSGI（Starman）の手前だけ** nginx です。CGI 全体を nginx にする話ではありません。
 
-ホストの HTTP ポートは `.env` の `WEB_PORT`（sample は `10000:80`）です。HTTPS は `HTTPS_PORT`（sample は `10443:443`）で、いまは **`psgi-nginx` のみ**です。`psgi-dev`（plackup）はアプリサーバー直公開のため HTTP のみです。
+ホストの HTTP ポートは `.env` の `WEB_PORT`（sample は `10000:80`）です。HTTPS は `HTTPS_PORT`（sample は `10443:443`）で、`cgi` / `psgi` / `psgi-nginx` が同じ証明書を使います。`psgi-dev`（plackup）はアプリサーバー直公開のため、今回は HTTP のみです。
 
 | profile | 内容 | 管理画面（HTTP） | 管理画面（HTTPS） |
 |---------|------|----------|----------|
-| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi | （対象外） |
+| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi |
 | `psgi-dev` | plackup（管理画面 + 公開 HTML） | http://localhost:5001/mt.cgi | （対象外） |
-| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi | （対象外） |
+| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi |
 | `psgi-nginx` | nginx リバースプロキシ + Starman（静的は nginx。#23） | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi |
+
+| profile | 内容 | 管理画面 |
+|---------|------|----------|
+| `cgi` | 現行の Apache CGI（デフォルト） | http://localhost:10000/cgi-bin/mt/mt.cgi |
+| `psgi-dev` | plackup（管理画面 + 公開 HTML） | http://localhost:5001/mt.cgi |
+| `psgi` | Apache リバースプロキシ + Starman（本番寄り骨格。未検証） | http://localhost:10000/cgi-bin/mt/mt.cgi |
+| `psgi-nginx` | nginx リバースプロキシ + Starman（静的は nginx。#23） | http://localhost:10000/cgi-bin/mt/mt.cgi |
 
 `cgi` / `psgi-dev` / `psgi` はそのまま使えます。`psgi` と `psgi-nginx` はどちらも `WEB_PORT` を使うため **同時起動しません**。切替は先に `./d-down.sh` してから `COMPOSE_PROFILES` を変えます。
 
@@ -82,7 +91,7 @@ macOS の AirPlay レシーバーがホストの 5000 番を使うため、`psgi
 
 生成済み HTML の CSS やリンクは、MT のサイト URL（データベース側）に従います。cgi で出したサイトは `http://localhost:10000/` を指していることが多いです。`psgi-dev` で見た目まで確認するなら、管理画面のサイト URL を `http://localhost:5001/` にして再構築してください。テーマの CSS / 画像（`/mt-static/support/theme_static/...`）は、コンテナ起動時に `themes/<id>/static` から同期します。
 
-| 画面 | HTTP（cgi / psgi / psgi-nginx） | HTTPS（psgi-nginx） | psgi-dev |
+| 画面 | HTTP（cgi / psgi / psgi-nginx） | HTTPS（cgi / psgi / psgi-nginx） | psgi-dev |
 |------|------------|----------|----------|
 | 公開サイト | http://localhost:10000/ | https://localhost:10443/ | http://localhost:5001/ |
 | 管理画面 | http://localhost:10000/cgi-bin/mt/mt.cgi | https://localhost:10443/cgi-bin/mt/mt.cgi | http://localhost:5001/mt.cgi |
@@ -96,19 +105,19 @@ macOS の AirPlay レシーバーがホストの 5000 番を使うため、`psgi
 | 共有プレビュー | http://localhost:10000/cgi-bin/mt/mt-shared-preview.cgi | https://localhost:10443/cgi-bin/mt/mt-shared-preview.cgi | http://localhost:5001/mt-shared-preview.cgi |
 | 静的ファイル（mt-static） | http://localhost:10000/cgi-bin/mt/mt-static/ | https://localhost:10443/cgi-bin/mt/mt-static/ | http://localhost:5001/mt-static/ |
 
-`psgi-nginx` は HTTP と HTTPS の両方で開けます（HTTP を HTTPS へ強制リダイレクトしません）。HTTPS は `.env` の `HTTPS_PORT`（sample は `10443:443`）です。自己署名のためブラウザの警告が出ます。
+`cgi` / `psgi` / `psgi-nginx` は HTTP と HTTPS の両方で開けます（HTTP を HTTPS へ強制リダイレクトしません）。HTTPS は `.env` の `HTTPS_PORT`（sample は `10443:443`）です。自己署名のためブラウザの警告が出ます。
 
-- cgi の `CGIPath` は相対 `/cgi-bin/mt/` です。
-- psgi の `mt-config.cgi.psgi` は HTTP の `http://localhost:10000/cgi-bin/mt/` です。
-- `psgi-nginx` は公開 HTML（`www/html`）と `mt-static` を nginx が返し、`/cgi-bin/mt/` だけ Starman へ渡します。HTTPS で管理画面の CSS を揃えるときは `mt-config.cgi.psgi-nginx` を `https://localhost:10443/cgi-bin/mt/` に合わせてください。
+- cgi の `CGIPath` は相対 `/cgi-bin/mt/` なので、アクセスした Host（HTTP / HTTPS）に追従しやすいです。
+- psgi の `mt-config.cgi.psgi` は HTTP の `http://localhost:10000/cgi-bin/mt/` のままです。HTTPS で管理画面の CSS を揃えるときは `https://localhost:10443/cgi-bin/mt/` に変えてください。`mt-config.cgi.psgi-nginx` も使うスキームに合わせてください。
+- `psgi-nginx` は公開 HTML（`www/html`）と `mt-static` を nginx が返し、`/cgi-bin/mt/` だけ Starman へ渡します。
 
-ローカル証明書は **`psgi-nginx` 用**です（リポジトリには入れません）。未生成のままだと nginx は起動しません。**先に次を実行**してください。
+ローカル証明書は **cgi / psgi / psgi-nginx 共通**です（リポジトリには入れません）。未生成のままだと 443 の vhost が証明書を読めず、Apache / nginx は起動しません。**先に次を実行**してください。
 
 ```bash
 ./docker/nginx/gen-local-cert.sh
 ```
 
-`docker/nginx/certs/localhost.crt` と `localhost.key` が作られます。秘密鍵は gitignore 済みです。
+`docker/nginx/certs/localhost.crt` と `localhost.key` が作られます。秘密鍵は gitignore 済みです。スクリプトの場所は nginx 配下ですが、Apache の cgi / psgi も同じディレクトリを volume で読みます。Apache 側は `mod_ssl` をイメージに入れるため、HTTPS を使うときは `./d-build.sh` で一度作り直してください。
 
 切替例（ポートが重なるので、先に停止してから profile を変える）:
 

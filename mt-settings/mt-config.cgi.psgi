@@ -1,8 +1,9 @@
 # The CGIPath is the URL to your Movable Type directory
-CGIPath http://localhost:10000/cgi-bin/mt/
+# HTTP（.env の WEB_PORT。sample は 10000）。HTTPS で CSS を揃えるなら https://localhost:10443 に変える。
+CGIPath https://localhost:10443/cgi-bin/mt/
 
 # simply remove it or comment out the line by prepending a "#".
-StaticWebPath http://localhost:10000/cgi-bin/mt/mt-static
+StaticWebPath https://localhost:10443/cgi-bin/mt/mt-static
 
 # Host-mounted development plugins (see docker-compose.yml).
 # Core plugins stay in /var/www/local/cgi-bin/mt/plugins from the MT zip.

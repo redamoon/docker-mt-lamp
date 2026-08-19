@@ -57,11 +57,15 @@ services:
         MT_FILE: "${MT}"
     ports:
       - "${WEB_PORT}"
+      - "${HTTPS_PORT:-10443:443}"
     volumes:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
       - ./mt-settings/mt-config.cgi:/var/www/local/cgi-bin/mt/mt-config.cgi
       - ./docker/httpd/virtualhost.conf:/etc/httpd/conf.d/virtualhost.conf
+      - ./docker/httpd/start-httpd.sh:/usr/local/bin/start-httpd.sh
+      # cgi / psgi / psgi-nginx 共通のローカル証明書（./docker/nginx/gen-local-cert.sh）
+      - ./docker/nginx/certs:/etc/httpd/certs:ro
       # 開発プラグイン。zip 同梱の /cgi-bin/mt/plugins は上書きしない（空ディレクトリでコアを潰さない）
       - ./mt-settings/plugins:/var/www/local/mt-dev-plugins
     depends_on:
@@ -116,10 +120,14 @@ services:
         MT_FILE: "${MT}"
     ports:
       - "${WEB_PORT}"
+      - "${HTTPS_PORT:-10443:443}"
     volumes:
       - ./www/html:/var/www/local/html
       - ./www/logs:/var/www/local/logs
       - ./docker/httpd/virtualhost-psgi.conf:/etc/httpd/conf.d/virtualhost.conf
+      - ./docker/httpd/start-httpd.sh:/usr/local/bin/start-httpd.sh
+      # cgi / psgi / psgi-nginx 共通のローカル証明書（./docker/nginx/gen-local-cert.sh）
+      - ./docker/nginx/certs:/etc/httpd/certs:ro
     depends_on:
       - psgi-app
   # nginx → Starman（#23）。psgi（Apache プロキシ）とは共存。同じ WEB_PORT のため同時起動しない
