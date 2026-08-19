@@ -5,6 +5,8 @@
 # !/www/html/.htaccess
 /db-data/
 /mt-settings/plugins/*
+!/mt-settings/plugins/.keep
+sql/.sql
 
 # gitignore
 

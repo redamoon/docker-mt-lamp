@@ -1,8 +1,8 @@
 # The CGIPath is the URL to your Movable Type directory
-CGIPath /cgi-bin/mt/
+CGIPath http://localhost:10000/cgi-bin/mt/
 
 # simply remove it or comment out the line by prepending a "#".
-StaticWebPath /cgi-bin/mt/mt-static
+StaticWebPath http://localhost:10000/cgi-bin/mt/mt-static
 
 # Host-mounted development plugins (see docker-compose.yml).
 # Core plugins stay in /var/www/local/cgi-bin/mt/plugins from the MT zip.
@@ -24,3 +24,7 @@ DefaultLanguage ja
 
 ## Debug Mode
 DebugMode 1
+
+## PSGI（静的ファイルは Apache。Starman は動的リクエスト）
+PSGIStreaming 1
+PSGIServeStatic 0
