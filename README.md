@@ -70,7 +70,7 @@ Movable Type は CGI スクリプト名単位で公開します。`psgi-dev` の
 
 macOS の AirPlay レシーバーがホストの 5000 番を使うため、`psgi-dev` の公開ポートは `.env` の `APP_PORT`（デフォルト `5001`）です。
 
-生成済み HTML の CSS やリンクは、MT のサイト URL（データベース側）に従います。cgi で出したサイトは `http://localhost:10000/` を指していることが多いです。`psgi-dev` で見た目まで確認するなら、管理画面のサイト URL を `http://localhost:5001/` にして再構築してください。
+生成済み HTML の CSS やリンクは、MT のサイト URL（データベース側）に従います。cgi で出したサイトは `http://localhost:10000/` を指していることが多いです。`psgi-dev` で見た目まで確認するなら、管理画面のサイト URL を `http://localhost:5001/` にして再構築してください。テーマの CSS / 画像（`/mt-static/support/theme_static/...`）は、コンテナ起動時に `themes/<id>/static` から同期します。
 
 | 画面 | cgi / psgi | psgi-dev |
 |------|------------|----------|

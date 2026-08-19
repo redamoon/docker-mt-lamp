@@ -5,6 +5,8 @@ export MT_HOME=/var/www/local/cgi-bin/mt
 export PERL5LIB="${MT_HOME}/lib:${MT_HOME}/extlib:${PERL5LIB:-}"
 cd "${MT_HOME}"
 
+/usr/local/bin/sync-theme-static.sh
+
 # 開発用: 公開 HTML も返し、mt 本体と開発プラグインの変更でリロードする
 exec plackup \
   -I lib \
