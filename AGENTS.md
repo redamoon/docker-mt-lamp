@@ -4,6 +4,17 @@
 
 入口の案内は [README.md](./README.md) を参照してください。
 
+実行モードごとのセットアップと使い方は次を優先してください。
+
+| モード | ガイド |
+|--------|--------|
+| `cgi` | [docs/onboarding/cgi.md](./docs/onboarding/cgi.md) |
+| `psgi-dev` | [docs/onboarding/psgi-dev.md](./docs/onboarding/psgi-dev.md) |
+| `psgi` | [docs/onboarding/psgi.md](./docs/onboarding/psgi.md) |
+| `psgi-nginx` | [docs/onboarding/psgi-nginx.md](./docs/onboarding/psgi-nginx.md) |
+
+索引: [docs/onboarding/README.md](./docs/onboarding/README.md)
+
 ## Setup
 
 1. `.env.sample` を `.env` にコピー（またはリネーム）する

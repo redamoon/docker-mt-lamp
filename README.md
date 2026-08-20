@@ -5,10 +5,11 @@ Movable Type のローカル開発環境です。人間向けの入口はこの 
 | 資料 | 対象 | 内容 |
 |------|------|------|
 | [README.md](./README.md)（本ページ） | 人間 | 概要・URL・各資料への遷移 |
-| [AGENTS.md](./AGENTS.md) | 人間 / AI エージェント | 環境構築・起動・切替・運用手順 |
+| [docs/onboarding/](./docs/onboarding/) | 人間 | 実行モード別のセットアップと使い方 |
+| [AGENTS.md](./AGENTS.md) | 人間 / AI エージェント | 環境構築・起動・切替・運用手順（全体） |
 | [CLAUDE.md](./CLAUDE.md) | Claude Code | `@AGENTS.md` への入口 |
 
-セットアップから始める場合は **[AGENTS.md](./AGENTS.md)** を開いてください。
+使うモードが決まっている場合は **[docs/onboarding/](./docs/onboarding/)** から始めてください。全体手順は [AGENTS.md](./AGENTS.md) です。
 
 ## Stack
 
@@ -40,11 +41,22 @@ Movable Type のローカル開発環境です。人間向けの入口はこの 
 | Swagger UI | http://localhost:8002 |
 | Redocly Redoc | http://localhost:8003 |
 
-モード切替・管理画面一覧・証明書・プラグイン配置などは [AGENTS.md](./AGENTS.md) を参照してください。
+モード別の手順は [docs/onboarding/](./docs/onboarding/) を、横断的な手順は [AGENTS.md](./AGENTS.md) を参照してください。
+
+## 実行モード別オンボーディング
+
+| モード | ガイド |
+|--------|--------|
+| `cgi`（デフォルト） | [docs/onboarding/cgi.md](./docs/onboarding/cgi.md) |
+| `psgi-dev` | [docs/onboarding/psgi-dev.md](./docs/onboarding/psgi-dev.md) |
+| `psgi` | [docs/onboarding/psgi.md](./docs/onboarding/psgi.md) |
+| `psgi-nginx` | [docs/onboarding/psgi-nginx.md](./docs/onboarding/psgi-nginx.md) |
+
+索引: [docs/onboarding/README.md](./docs/onboarding/README.md)
 
 ## Quick start
 
-詳細は [AGENTS.md の Setup](./AGENTS.md#setup) 以降にあります。最短の流れだけここに置きます。
+最短はデフォルトの `cgi` です。詳細は [cgi オンボーディング](./docs/onboarding/cgi.md) または [AGENTS.md の Setup](./AGENTS.md#setup) を見てください。
 
 ```bash
 cp .env.sample .env
